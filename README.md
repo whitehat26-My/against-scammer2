@@ -14,7 +14,7 @@ perkara yang sistem rasmi tidak buat secara terbuka:
 > [Semak Mule](https://semakmule.rmp.gov.my). Untuk kes yang baru berlaku,
 > hubungi NSRC di **997**.
 
-## Status: MVP (fasa 1)
+## Apa yang siap
 
 Siap dan berfungsi:
 
@@ -28,15 +28,21 @@ Siap dan berfungsi:
   Semak Mule. Untuk input jenis URL ia turut memaparkan petunjuk teknikal
   heuristik dan memaut ke entri ensiklopedia *Pautan phishing*. Tiada
   pangkalan data rekod jenayah dibina atau ditiru.
+- **Laporan komuniti** `/lapor` — borang dengan persetujuan PDPA, muat naik bukti
+  (metadata imej dibuang secara automatik), dan kontak pelapor yang pilihan.
+  Tiada laporan diterbitkan tanpa semakan moderator.
+- **Papan pemuka moderasi** `/moderasi` — giliran semakan, tindakan
+  terima/tolak/tanda dipertikai/buang, dan log audit penuh
+- **Halaman laporan awam** `/laporan/[id]` — status, sokongan pelapor lain, dan
+  borang hak menjawab yang menukar status kepada "Dipertikai"
 - **`/kalau-dah-kena`** — langkah 997 langkah demi langkah dan saluran rasmi
-- **`/status-laporan`** — reka bentuk sistem status laporan komuniti
+- **`/status-laporan`** — sistem status laporan komuniti
 - **`/privasi`** — notis privasi PDPA 2010
 - **`/hak-menjawab`** — saluran bantahan & permintaan PDPA
 - Bahasa Malaysia dengan toggle Bahasa Inggeris, mobile-first
 
-Fasa akan datang (belum dibina): borang laporan komuniti penuh + papan pemuka
-moderasi, suapan berita automatik + digest e-mel, akaun pengguna.
-Skema pangkalan data untuk semua entiti itu ada dalam [`db/schema.sql`](db/schema.sql).
+Fasa akan datang (belum dibina): suapan berita automatik + digest e-mel, akaun
+pengguna untuk menjejak laporan sendiri, dan log masuk moderator melalui SSO.
 
 ## Menjalankan projek
 
@@ -64,6 +70,24 @@ Semuanya ada nilai lalai untuk pembangunan. Tetapkan sebelum pelancaran sebenar:
 | --- | --- |
 | `NEXT_PUBLIC_KONTAK_EMEL` | Alamat e-mel untuk hak menjawab & permintaan PDPA |
 | `NEXT_PUBLIC_SITE_URL` | URL kanonik untuk `sitemap.xml` dan `robots.txt` |
+| `DATABASE_URL` | Postgres/Supabase. Jika tidak ditetapkan, storan fail JSON di bawah `.data/` digunakan (pembangunan sahaja). |
+| `DATA_DIR` | Lokasi storan fail dan bukti imej. Lalai `.data/`. |
+| `MODERATOR_AKAUN` | Akaun moderator, format `id:token,id2:token2`. **Wajib dalam produksi** — tanpanya papan pemuka menolak semua log masuk. |
+| `SESSION_SECRET` | Rahsia HMAC untuk cookie sesi moderator. **Wajib dalam produksi.** |
+
+Untuk menjalankan dengan Postgres:
+
+```bash
+createdb portal_scam
+psql portal_scam -f db/schema.sql
+DATABASE_URL=postgres://…/portal_scam \
+MODERATOR_AKAUN="aisyah:token-rahsia" \
+SESSION_SECRET="$(openssl rand -hex 32)" \
+npm run dev
+```
+
+Ujian integrasi Postgres (`tests/pg-store.test.ts`) berjalan secara automatik
+apabila `DATABASE_URL` ditetapkan, dan dilangkau apabila tidak.
 
 ## Struktur
 
@@ -79,9 +103,19 @@ src/lib/
   status.ts           Sistem status laporan komuniti (teras anti-fitnah)
   taxonomy.ts         Taksonomi platform & tahap risiko yang dikongsi
   official.ts         Saluran rasmi kerajaan
+  moderator.ts        Sesi moderator (HMAC) untuk papan pemuka moderasi
+  rate-limit.ts       Had kadar dalam ingatan, tanpa menyimpan alamat IP
   i18n.ts             Pemilihan bahasa
   dictionaries/       Teks antara muka BM & EN
-tests/                Ujian unit
+  laporan/
+    types.ts          Entiti laporan + peraturan keterlihatan
+    nilai.ts          Normalisasi & hashing untuk carian k-anonymity
+    validasi.ts       Pengesahan borang (kod ralat, bukan ayat)
+    store.ts          Antara muka storan + pemilih pelaksanaan
+    file-store.ts     Storan JSON (pembangunan)
+    pg-store.ts       Storan Postgres/Supabase (produksi)
+    bukti.ts          Pengesahan imej + pembuangan metadata EXIF
+tests/                Ujian unit + integrasi
 ```
 
 ## Keputusan reka bentuk yang penting
@@ -100,6 +134,12 @@ memaparkan butang keluar ke Semak Mule — untuk **setiap** jenis input.
 - Pengelasan carian berlaku sepenuhnya dalam pelayar (`src/lib/query.ts`
   adalah fungsi tulen yang dipanggil oleh komponen klien). Tiada permintaan
   rangkaian dibuat dengan teks carian.
+- Semakan laporan komuniti menggunakan **k-anonymity**: pelayar mengira
+  SHA-256 bagi maklumat yang dicari dan menghantar hanya 5 aksara pertama
+  kepada `/api/laporan/julat`. Pelayan mengembalikan semua laporan tersiar
+  yang berkongsi awalan itu, dan padanan tepat dibuat semula dalam pelayar.
+  Satu awalan dikongsi berjuta-juta nilai, jadi pelayan tidak boleh
+  menentukan apa yang dicari. Endpoint itu juga tidak menyimpan log.
 - Teks carian tidak dimasukkan ke dalam URL, jadi ia tidak bocor melalui
   sejarah pelayar, pautan yang dikongsi, atau header `Referer`.
 - `Referrer-Policy: no-referrer` ditetapkan dalam `next.config.ts` supaya
@@ -125,7 +165,22 @@ sengaja pada masa hadapan:
 
 Dalam pangkalan data, `report_moderation_first` (CHECK constraint) menghalang
 mana-mana laporan meninggalkan status `belum_disemak` tanpa rekod siapa yang
-menyemak dan bila.
+menyemak dan bila. Kedua-dua pelaksanaan storan (fail dan Postgres) diuji
+terhadap peraturan yang sama.
+
+Nota: "ditolak" dan "dibuang" bukan status awam. Ia disimpan sebagai cap masa
+berasingan supaya senarai status awam kekal tiga sahaja seperti direka.
+
+### Data peribadi dalam laporan komuniti
+
+- Kontak pelapor adalah pilihan; laporan tanpa nama diterima sepenuhnya, dan
+  e-mel pelapor tidak pernah dipaparkan kepada orang awam.
+- Imej bukti hanya boleh dibaca melalui `/api/bukti/[nama]`, yang menolak
+  sesiapa yang belum log masuk sebagai moderator.
+- Metadata imej (termasuk koordinat GPS dalam EXIF) dibuang pada titik masuk,
+  sebelum fail ditulis ke cakera — lihat `src/lib/laporan/bukti.ts`.
+- Had kadar tidak menyimpan alamat IP: kunci ialah hash dengan garam rawak
+  yang dijana semula setiap kali proses bermula.
 
 ### Hak menjawab yang berfungsi
 
@@ -143,6 +198,17 @@ medan frontmatter, peraturan penulisan, dan cara menambah kategori baharu.
 
 Nombor telefon dan URL agensi dalam `src/lib/official.ts` perlu disemak semula
 secara berkala. Kemas kini `DISEMAK_PADA` setiap kali disahkan.
+
+## Sebelum pelancaran
+
+1. Tetapkan `MODERATOR_AKAUN` dan `SESSION_SECRET`. Tanpa `MODERATOR_AKAUN`,
+   papan pemuka moderasi menolak semua log masuk dalam produksi; tanpa
+   `SESSION_SECRET`, pelayan enggan bermula dengan sesi moderator.
+2. Tetapkan `DATABASE_URL` — storan fail JSON hanya untuk pembangunan.
+3. Ganti `NEXT_PUBLIC_KONTAK_EMEL` dengan peti masuk yang benar-benar dipantau.
+4. Token kongsi moderator adalah penyelesaian sementara. Gantikan
+   `src/lib/moderator.ts` dengan Supabase Auth atau SSO organisasi anda apabila
+   pasukan moderasi bertambah besar.
 
 ## Penafian
 

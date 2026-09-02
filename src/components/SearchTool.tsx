@@ -1,14 +1,25 @@
 'use client';
 
 import Link from 'next/link';
-import { useId, useRef, useState } from 'react';
-import { classifyQuery, type QueryClassification } from '@/lib/query';
+import { useId, useMemo, useRef, useState } from 'react';
+import { classifyQuery, type QueryKind, type QueryClassification } from '@/lib/query';
+import { LaporanKomuniti } from './LaporanKomuniti';
+import type { JenisKenalan } from '@/lib/laporan/types';
 import { SEMAK_MULE_URL } from '@/lib/official';
 import { SLUG_PAUTAN_PHISHING } from '@/lib/config';
-import type { Dictionary } from '@/lib/i18n';
+import type { Dictionary, Lang } from '@/lib/i18n';
+
+/** Padankan jenis input alat semakan dengan jenis kenalan dalam laporan komuniti. */
+const JENIS_LAPORAN: Partial<Record<QueryKind, JenisKenalan>> = {
+  telefon: 'telefon',
+  akaun_bank: 'akaun_bank',
+  url: 'url',
+  syarikat: 'syarikat',
+};
 
 type Props = {
   d: Dictionary['semak'];
+  lang: Lang;
   /** Ringkas untuk halaman utama: sembunyikan panel hasil penuh. */
   compact?: boolean;
 };
@@ -19,7 +30,7 @@ type Props = {
  * PRIVASI: pengelasan berlaku sepenuhnya dalam pelayar. Teks carian
  * tidak dihantar ke pelayan, tidak dimasukkan ke dalam URL, dan tidak disimpan.
  */
-export function SearchTool({ d, compact = false }: Props) {
+export function SearchTool({ d, lang, compact = false }: Props) {
   const [value, setValue] = useState('');
   const [result, setResult] = useState<QueryClassification | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -86,7 +97,9 @@ export function SearchTool({ d, compact = false }: Props) {
       </form>
 
       <div ref={resultRef} tabIndex={-1} aria-live="polite">
-        {result ? <SearchResult d={d} result={result} compact={compact} onReset={handleReset} /> : null}
+        {result ? (
+          <SearchResult d={d} lang={lang} result={result} compact={compact} onReset={handleReset} />
+        ) : null}
       </div>
     </div>
   );
@@ -94,20 +107,30 @@ export function SearchTool({ d, compact = false }: Props) {
 
 function SearchResult({
   d,
+  lang,
   result,
   compact,
   onReset,
 }: {
   d: Dictionary['semak'];
+  lang: Lang;
   result: QueryClassification;
   compact: boolean;
   onReset: () => void;
 }) {
   const panduan = d.panduan[result.kind];
+  // Rujukan stabil: tanpa ini, setiap render mencetuskan semakan baharu.
+  const jenisLaporan = useMemo(
+    () =>
+      [result.kind, ...result.alternatives]
+        .map((k) => JENIS_LAPORAN[k])
+        .filter((j): j is JenisKenalan => Boolean(j)),
+    [result],
+  );
 
   return (
     <div className="stack-lg">
-      <section className="card stack">
+      <section className="panel stack">
         <div className="divider-title">
           <h2>{d.hasilTitle}</h2>
         </div>
@@ -126,7 +149,7 @@ function SearchResult({
       </section>
 
       {/* Semakan rasmi sentiasa dipaparkan, untuk semua jenis input. */}
-      <section className="card stack">
+      <section className="panel stack">
         <h2>{d.rasmiTitle}</h2>
         <p className="muted">{d.rasmiLead}</p>
         <div className="btnrow">
@@ -150,7 +173,7 @@ function SearchResult({
       </section>
 
       {result.kind === 'url' ? (
-        <section className="card stack">
+        <section className="panel stack">
           <h2>{d.hints.title}</h2>
           <p className="muted small">{d.hints.lead}</p>
           {result.urlHints.length > 0 ? (
@@ -173,16 +196,22 @@ function SearchResult({
       ) : null}
 
       {!compact ? (
-        <section className="card stack">
+        <section className="panel stack">
           <h2>{d.komunitiTitle}</h2>
-          <div className="callout callout--nota">
-            <p style={{ marginBottom: 0 }}>{d.komunitiBelumAda}</p>
-          </div>
+          {jenisLaporan.length > 0 ? (
+            <LaporanKomuniti
+              key={result.raw}
+              jenis={jenisLaporan}
+              nilai={result.raw}
+              d={d}
+              lang={lang}
+            />
+          ) : null}
           <div className="btnrow">
             <Link className="btn btn--secondary" href="/status-laporan">
               {d.komunitiStatusCta}
             </Link>
-            <Link className="btn btn--danger" href="/kalau-dah-kena">
+            <Link className="btn btn--danger" href={`/lapor?jenis=${result.kind}`}>
               {d.laporCta}
             </Link>
           </div>

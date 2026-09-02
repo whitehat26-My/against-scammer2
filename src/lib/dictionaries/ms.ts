@@ -10,6 +10,7 @@
 export const ms = {
   meta: {
     title: 'Portal Semakan Scam Malaysia',
+    titlePendek: 'Semakan Scam',
     titleTemplate: '%s — Portal Semakan Scam',
     description:
       'Belajar kenal taktik scam terkini di Malaysia dalam bahasa yang senang faham, dan tahu ke mana nak rujuk untuk semakan rasmi.',
@@ -18,9 +19,13 @@ export const ms = {
     skip: 'Terus ke kandungan utama',
     home: 'Utama',
     taktik: 'Taktik scam',
+    taktikPendek: 'Taktik',
     semak: 'Semak',
     bantuan: 'Kalau dah kena',
+    bantuanPendek: 'Bantuan',
+    lapor: 'Lapor',
     tentang: 'Tentang',
+    moderasi: 'Moderasi',
     menu: 'Menu',
   },
   lang: {
@@ -32,8 +37,8 @@ export const ms = {
   },
   banner: {
     text: 'Portal komuniti — bukan portal rasmi kerajaan.',
-    cta: 'Semakan rasmi: Semak Mule (PDRM)',
-    urgent: 'Baru kena tipu? Terus telefon 997.',
+    cta: 'Semak Mule (PDRM)',
+    urgent: 'Baru kena? Telefon 997',
   },
   common: {
     kemasKini: 'Kemas kini',
@@ -133,11 +138,18 @@ export const ms = {
     semakMuleCta: 'Semak rasmi di Semak Mule',
     semakMuleNota: 'Pautan keluar ke semakmule.rmp.gov.my (laman rasmi PDRM).',
     komunitiTitle: 'Laporan komuniti',
-    komunitiBelumAda:
-      'Modul laporan komuniti belum dibuka. Dalam MVP ini, tiada laporan orang awam dipaparkan — jadi ketiadaan laporan di sini BUKAN bermakna sesuatu itu selamat.',
-    komunitiStatusCta: 'Bagaimana status laporan akan berfungsi',
-    laporCta: 'Laporkan nombor ini',
-    laporNota: 'Buat masa ini butang ini membawa anda ke saluran laporan rasmi.',
+    komunitiMenyemak: 'Menyemak laporan komuniti…',
+    komunitiTiada:
+      'Tiada laporan komuniti yang sepadan. Ini BUKAN bermakna ia selamat — kebanyakan nombor yang digunakan untuk menipu tidak pernah dilaporkan oleh sesiapa.',
+    komunitiAda: '{n} laporan komuniti sepadan dengan maklumat ini.',
+    komunitiLihat: 'Lihat laporan',
+    komunitiPrivasi:
+      'Semakan ini menggunakan padanan separa: pelayar anda menghantar hanya 5 aksara pertama cap jari maklumat tersebut, jadi pelayan tidak tahu apa yang anda cari.',
+    komunitiRalat: 'Semakan laporan komuniti tidak dapat dijalankan sekarang. Sila guna semakan rasmi di bawah.',
+    komunitiStatusCta: 'Bagaimana status laporan berfungsi',
+    laporCta: 'Laporkan kepada komuniti',
+    laporNota:
+      'Laporan komuniti adalah amaran awal, bukan laporan polis. Untuk kes yang baru berlaku, hubungi 997 dahulu.',
     kinds: {
       telefon: 'Nombor telefon',
       akaun_bank: 'Nombor akaun bank',
@@ -252,11 +264,11 @@ export const ms = {
   laporan: {
     title: 'Sistem status laporan komuniti',
     lead:
-      'Modul laporan komuniti belum dibuka dalam versi ini. Kami menerbitkan reka bentuk statusnya lebih awal supaya anda tahu apa maksud setiap label apabila ia hidup nanti.',
+      'Setiap laporan komuniti membawa satu daripada tiga status di bawah. Tiada satu pun bermaksud pengesahan jenayah — hanya PDRM dan mahkamah boleh menentukannya.',
     kenapaTitle: 'Kenapa label ini penting',
     kenapaLead:
       'Satu laporan orang awam bukan bukti jenayah. Label yang salah boleh memusnahkan nama seseorang yang tidak bersalah — termasuk mangsa yang akaunnya dicuri untuk dijadikan akaun keldai. Sebab itu tiada satu pun status di bawah bermaksud “disahkan”.',
-    statusTitle: 'Tiga status yang akan digunakan',
+    statusTitle: 'Tiga status yang digunakan',
     peraturanTitle: 'Peraturan tetap',
     peraturan: [
       'Tiada laporan diterbitkan secara automatik. Setiap laporan disemak moderator dahulu.',
@@ -313,16 +325,21 @@ export const ms = {
     kumpul: [
       { apa: 'Pilihan bahasa', kenapa: 'Untuk mengingati sama ada anda mahu BM atau EN.', simpan: 'Cookie selama 1 tahun. Tiada pengenalan pengguna di dalamnya.' },
       { apa: 'Log pelayan asas', kenapa: 'Diperlukan untuk menyampaikan laman dan mengesan penyalahgunaan.', simpan: 'Dikendalikan oleh penyedia hosting mengikut tetapan lalai mereka. Kami tidak menggunakannya untuk profil pengguna.' },
+      { apa: 'Kandungan laporan komuniti', kenapa: 'Untuk menilai laporan dan, jika ia diterbitkan, memberi amaran awal kepada orang lain.', simpan: 'Dua tahun dari tarikh laporan, kemudian dibuang jika tidak lagi diperlukan.' },
+      { apa: 'E-mel pelapor (pilihan)', kenapa: 'Supaya moderator boleh menghubungi anda jika laporan perlu dijelaskan.', simpan: 'Bersama laporan berkenaan. Tidak pernah dipaparkan kepada orang awam.' },
+      { apa: 'Imej bukti (pilihan)', kenapa: 'Untuk membantu moderator menilai laporan.', simpan: 'Akses terhad kepada moderator. Metadata imej dibuang sebelum penyimpanan.' },
+      { apa: 'Butiran bantahan hak menjawab', kenapa: 'Untuk mengendalikan bantahan dan memaklumkan keputusan kepada anda.', simpan: 'Bersama rekod bantahan dan log audit berkaitan.' },
     ],
-    fasaTitle: 'Apabila modul laporan komuniti dibuka',
+    fasaTitle: 'Apabila anda menghantar laporan komuniti',
     fasaLead:
-      'Modul laporan belum aktif. Apabila ia dibuka, prinsip berikut akan terpakai dan notis ini akan dikemas kini dengan butiran penuh sebelum sebarang data dikumpul.',
+      'Borang laporan mengumpul data peribadi, jadi prinsip berikut terpakai pada setiap laporan yang dihantar.',
     fasa: [
-      'Borang laporan hanya meminta maklumat yang benar-benar perlu untuk menilai laporan.',
-      'Memberi maklumat hubungan adalah pilihan. Laporan tanpa nama diterima.',
-      'Persetujuan PDPA diminta secara jelas melalui kotak semak sebelum penghantaran, bukan tersembunyi dalam terma.',
-      'Bukti imej disimpan dengan akses terhad kepada moderator sahaja.',
-      'Data peribadi yang tidak lagi diperlukan untuk tujuan asal akan dibuang.',
+      'Borang hanya meminta maklumat yang benar-benar perlu untuk menilai laporan.',
+      'Memberi e-mel adalah pilihan. Laporan tanpa nama diterima sepenuhnya.',
+      'Persetujuan PDPA diminta melalui kotak semak sebelum penghantaran, bukan tersembunyi dalam terma.',
+      'Bukti imej hanya boleh dilihat oleh moderator yang telah log masuk. Metadata imej, termasuk koordinat GPS, dibuang secara automatik sebelum fail disimpan.',
+      'E-mel pelapor tidak pernah dipaparkan kepada orang awam.',
+      'Data peribadi disimpan selama dua tahun dari tarikh laporan, kemudian dibuang jika ia tidak lagi diperlukan.',
       'Anda boleh meminta akses, pembetulan atau pembuangan data anda pada bila-bila masa.',
     ],
     hakTitle: 'Hak anda',
@@ -351,21 +368,23 @@ export const ms = {
     bezaKami: [
       'Ensiklopedia modus operandi dalam bahasa orang awam.',
       'Alat semakan yang menerangkan langkah rasmi yang betul untuk setiap jenis maklumat.',
-      'Lapisan laporan komuniti sebagai amaran awal (fasa akan datang), dengan status yang tidak pernah mengesahkan jenayah.',
+      'Lapisan laporan komuniti sebagai amaran awal, dengan status yang tidak pernah mengesahkan jenayah.',
     ],
     fasaTitle: 'Peringkat pembangunan',
     fasaSekarang: 'Versi semasa (MVP)',
     fasaSekarangItems: [
       'Ensiklopedia modus operandi dengan kategori teras',
       'Alat semakan yang merujuk keluar ke Semak Mule',
+      'Laporan komuniti dengan moderasi wajib sebelum penerbitan',
+      'Papan pemuka moderasi dengan log audit',
       'Panduan langkah demi langkah “kalau dah kena scam”',
       'Notis privasi PDPA dan saluran hak menjawab',
     ],
     fasaSeterusnya: 'Fasa akan datang',
     fasaSeterusnyaItems: [
-      'Borang laporan komuniti penuh dengan papan pemuka moderasi dan log audit',
       'Suapan berita automatik dan digest e-mel mingguan (opt-in)',
       'Akaun pengguna untuk menjejak status laporan sendiri',
+      'Pengesahan moderator melalui SSO organisasi',
     ],
     kandunganTitle: 'Dari mana kandungan ini datang',
     kandunganLead:
@@ -380,6 +399,132 @@ export const ms = {
     sumbanganTitle: 'Sumbangan dan pembetulan',
     sumbanganLead:
       'Jumpa maklumat yang salah atau sudah lapuk? Beritahu kami. Pembetulan fakta adalah keutamaan.',
+  },
+  lapor: {
+    title: 'Laporkan kepada komuniti',
+    lead:
+      'Laporan anda menjadi amaran awal untuk orang lain. Ia disemak oleh moderator dahulu, dan ia tidak akan pernah dilabel sebagai pengesahan jenayah.',
+    amaranTitle: 'Baca dulu sebelum hantar',
+    amaran: [
+      'Laporan ini bukan laporan polis. Untuk kes yang baru berlaku, hubungi NSRC 997 dan buat laporan polis — itu yang membolehkan siasatan dan pembekuan akaun.',
+      'Tulis apa yang benar-benar berlaku kepada anda sahaja. Jangan menuduh, dan jangan salin cerita orang lain.',
+      'Jangan masukkan nombor kad pengenalan, nombor kad bank penuh, atau maklumat peribadi orang lain yang tidak berkaitan.',
+      'Pihak yang dinamakan berhak membantah dan memberi penjelasan. Laporan yang tidak dapat disokong akan dibuang.',
+    ],
+    medan: {
+      jenis: 'Jenis maklumat',
+      jenisPilih: 'Pilih satu',
+      nilai: 'Maklumat yang dilaporkan',
+      nilaiBantuan: 'Contoh: nombor telefon, nombor akaun bank, alamat laman web, atau nama syarikat.',
+      kategori: 'Kategori scam',
+      kategoriKosong: 'Saya tidak pasti',
+      penerangan: 'Apa yang berlaku',
+      peneranganBantuan: 'Ceritakan mengikut urutan masa. Sekurang-kurangnya 20 aksara.',
+      bukti: 'Bukti (pilihan)',
+      buktiBantuan:
+        'Imej JPG, PNG atau WEBP, maksimum 3 fail dan 5 MB setiap satu. Metadata imej termasuk lokasi GPS dibuang secara automatik sebelum disimpan. Hanya moderator boleh melihat fail ini.',
+      emel: 'E-mel anda (pilihan)',
+      emelBantuan:
+        'Hanya digunakan jika moderator perlu menjelaskan sesuatu tentang laporan anda. Laporan tanpa nama diterima sepenuhnya.',
+      pdpa:
+        'Saya faham laporan ini akan disemak moderator, dan saya bersetuju maklumat yang saya berikan diproses untuk tujuan itu di bawah Akta Perlindungan Data Peribadi 2010.',
+    },
+    jenis: {
+      telefon: 'Nombor telefon',
+      akaun_bank: 'Nombor akaun bank',
+      url: 'Laman web / pautan',
+      syarikat: 'Nama syarikat atau perniagaan',
+      profil_sosial: 'Profil media sosial',
+      lain: 'Lain-lain',
+    },
+    hantar: 'Hantar laporan',
+    menghantar: 'Menghantar…',
+    ralat: {
+      wajib: 'Medan ini wajib diisi.',
+      terlalu_pendek: 'Terlalu pendek. Sila beri sedikit lagi butiran.',
+      terlalu_panjang: 'Terlalu panjang. Sila ringkaskan.',
+      tidak_sah: 'Nilai ini tidak sah.',
+      pdpa: 'Persetujuan diperlukan sebelum laporan boleh dihantar.',
+      umum: 'Laporan tidak dapat dihantar. Sila cuba lagi.',
+      kadar: 'Terlalu banyak laporan dihantar dari peranti ini. Sila cuba lagi sebentar nanti.',
+      bukti_jenis: 'Hanya fail imej JPG, PNG atau WEBP diterima.',
+      bukti_saiz: 'Fail terlalu besar. Maksimum 5 MB setiap satu.',
+      bukti_banyak: 'Maksimum 3 fail bukti.',
+    },
+    jayaTitle: 'Laporan anda telah diterima',
+    jayaLead:
+      'Laporan anda kini dalam giliran semakan. Ia belum dipaparkan kepada orang awam dan tidak akan dipaparkan sehingga seorang moderator menyemaknya.',
+    jayaLangkah: [
+      'Moderator menyemak laporan anda secara manual.',
+      'Jika ia diterbitkan, ia dilabel "Dilaporkan komuniti" — bukan pengesahan jenayah.',
+      'Pihak yang dinamakan boleh membantah, dan penjelasan mereka akan dipaparkan bersama laporan.',
+    ],
+    jayaRasmi: 'Kalau anda kehilangan wang, jangan berhenti di sini. Hubungi 997 dan buat laporan polis.',
+    kembali: 'Kembali ke halaman utama',
+  },
+  laporanAwam: {
+    title: 'Laporan komuniti',
+    tidakDijumpai: 'Laporan ini tidak dijumpai atau belum diterbitkan.',
+    dilaporkanPada: 'Dilaporkan pada',
+    kategoriLabel: 'Kategori',
+    jenisLabel: 'Jenis maklumat',
+    peneranganLabel: 'Apa yang dilaporkan',
+    penafian:
+      'Ini laporan daripada orang awam, bukan rekod rasmi. Ia tidak bermakna satu jenayah telah disahkan. Untuk semakan berstatus rasmi, gunakan Semak Mule (PDRM).',
+    sokongTitle: 'Perkara sama berlaku kepada anda?',
+    sokongLead:
+      'Jika anda juga berdepan perkara yang sama dengan maklumat ini, anda boleh menyokong laporan ini. Bilangan pelapor akan ditunjukkan, tetapi status laporan kekal "dilaporkan".',
+    sokongCta: 'Saya juga mengalaminya',
+    sokongJaya: 'Terima kasih. Sokongan anda telah direkodkan.',
+    bantahTitle: 'Ini tentang anda atau perniagaan anda?',
+    bantahLead:
+      'Anda berhak membantah dan memberi penjelasan. Laporan ini akan ditanda "Dipertikai" sementara semakan dijalankan, dan penjelasan anda dipaparkan bersamanya.',
+    bantahCta: 'Hantar bantahan',
+    bantahNama: 'Nama anda',
+    bantahEmel: 'E-mel untuk kami hubungi',
+    bantahHujah: 'Penjelasan anda',
+    bantahPdpa:
+      'Saya bersetuju maklumat hubungan saya diproses untuk tujuan mengendalikan bantahan ini sahaja.',
+    bantahJaya:
+      'Bantahan anda telah diterima. Laporan ini kini ditanda "Dipertikai" dan kami akan menghubungi anda dalam tempoh 3 hari bekerja.',
+    bantahSedia: 'Penjelasan daripada pihak yang dinamakan',
+  },
+  moderasi: {
+    title: 'Papan pemuka moderasi',
+    lead: 'Semak laporan komuniti sebelum ia dipaparkan kepada orang awam.',
+    masukTitle: 'Log masuk moderator',
+    masukId: 'ID moderator',
+    masukToken: 'Token',
+    masukCta: 'Log masuk',
+    masukGagal: 'ID atau token tidak sah.',
+    masukLalai:
+      'Akaun demo pembangunan sedang digunakan (ID "demo"). Tetapkan MODERATOR_AKAUN dan SESSION_SECRET sebelum pelancaran.',
+    masukTiada:
+      'Moderasi belum dikonfigurasi. Tetapkan MODERATOR_AKAUN dalam persekitaran pelayan sebelum menggunakan papan pemuka ini.',
+    keluar: 'Log keluar',
+    sebagai: 'Log masuk sebagai',
+    giliranTitle: 'Giliran semakan',
+    giliranKosong: 'Tiada laporan menunggu semakan.',
+    tersiarTitle: 'Laporan tersiar',
+    tersiarKosong: 'Belum ada laporan yang diterbitkan.',
+    logTitle: 'Log audit',
+    logKosong: 'Belum ada tindakan direkodkan.',
+    logLajur: { tarikh: 'Tarikh', moderator: 'Moderator', tindakan: 'Tindakan', laporan: 'Laporan', sebab: 'Sebab' },
+    buktiTitle: 'Bukti',
+    buktiTiada: 'Tiada bukti dilampirkan.',
+    sebabLabel: 'Catatan (pilihan)',
+    tindakan: {
+      terima: 'Terbitkan sebagai dilaporkan',
+      tolak: 'Tolak',
+      tanda_dipertikai: 'Tanda dipertikai',
+      buang: 'Buang',
+      buka_semula: 'Buka semula',
+    },
+    tindakanNota:
+      'Setiap tindakan direkodkan dalam log audit bersama ID anda dan masa. Terbitkan hanya jika laporan cukup jelas dan tidak menuduh pihak yang tidak berkaitan.',
+    pelaporEmel: 'E-mel pelapor',
+    tanpaNama: 'Tanpa nama',
+    sokongan: 'Sokongan',
   },
   footer: {
     tentang: 'Tentang portal',

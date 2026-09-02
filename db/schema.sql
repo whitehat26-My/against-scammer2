@@ -53,7 +53,7 @@ begin
     create type jenis_kenalan as enum ('telefon', 'akaun_bank', 'url', 'syarikat', 'profil_sosial', 'lain');
   end if;
   if not exists (select 1 from pg_type where typname = 'tindakan_moderator') then
-    create type tindakan_moderator as enum ('terima', 'tolak', 'tanda_dipertikai', 'pinda', 'buang', 'buka_semula');
+    create type tindakan_moderator as enum ('terima', 'tolak', 'tanda_dipertikai', 'buang', 'buka_semula');
   end if;
 end $$;
 
@@ -63,7 +63,13 @@ create table if not exists report (
   -- Apa yang dilaporkan
   jenis_kenalan      jenis_kenalan not null,
   nilai_kenalan      text not null check (length(btrim(nilai_kenalan)) between 3 and 200),
-  kategori_id        uuid references scam_category (id) on delete set null,
+  -- SHA-256 nilai yang dinormalkan. Membolehkan carian k-anonymity: pelayar
+  -- hanya menghantar 5 aksara pertama, jadi pelayan tidak tahu apa yang dicari.
+  nilai_hash         text not null check (nilai_hash ~ '^[0-9a-f]{64}$'),
+  hash_awalan        text generated always as (left(nilai_hash, 5)) stored,
+  -- Slug entri ensiklopedia (content/taktik). Bukan kunci asing kerana
+  -- kandungan ensiklopedia disimpan sebagai Markdown, bukan dalam DB.
+  kategori_slug      text check (kategori_slug is null or kategori_slug ~ '^[a-z0-9-]+$'),
   penerangan         text not null check (length(btrim(penerangan)) between 20 and 5000),
   bukti_url          text[] not null default '{}',
 
@@ -81,10 +87,16 @@ create table if not exists report (
   -- Tarikh data peribadi perlu dibuang jika tiada tujuan pemprosesan lagi.
   simpan_sehingga    date not null default (current_date + interval '2 years'),
 
-  -- Moderasi
-  disemak_oleh       uuid,
+  -- Moderasi. `disemak_oleh` ialah teks, bukan uuid: pengenal moderator datang
+  -- daripada penyedia identiti yang dipilih (Supabase Auth, SSO, atau token
+  -- kongsi dalam pemasangan kecil) dan tidak semestinya UUID.
+  disemak_oleh       text,
   disemak_pada       timestamptz,
   catatan_moderator  text,
+  -- Ditolak / dibuang bukan status awam. Status awam kekal tiga sahaja;
+  -- ini hanya menentukan sama ada laporan keluar daripada giliran & paparan.
+  ditolak_pada       timestamptz,
+  dibuang_pada       timestamptz,
 
   tarikh_hantar      timestamptz not null default now(),
   dikemaskini_pada   timestamptz not null default now(),
@@ -98,6 +110,7 @@ create table if not exists report (
 );
 
 create index if not exists report_nilai_idx on report (lower(btrim(nilai_kenalan)));
+create index if not exists report_hash_awalan_idx on report (hash_awalan);
 create index if not exists report_status_idx on report (status);
 create index if not exists report_simpan_sehingga_idx on report (simpan_sehingga);
 
@@ -133,7 +146,7 @@ create table if not exists dispute (
   diakui_pada    timestamptz,
   keputusan      text check (keputusan in ('kekal_dipertikai', 'dipinda', 'dibuang')),
   keputusan_pada timestamptz,
-  keputusan_oleh uuid
+  keputusan_oleh text
 );
 
 create index if not exists dispute_report_idx on dispute (report_id);
@@ -146,7 +159,7 @@ create table if not exists moderator_log (
   id          uuid primary key default gen_random_uuid(),
   report_id   uuid references report (id) on delete set null,
   dispute_id  uuid references dispute (id) on delete set null,
-  moderator_id uuid not null,
+  moderator_id text not null,
   tindakan    tindakan_moderator not null,
   sebab       text,
   tarikh      timestamptz not null default now()
@@ -225,7 +238,12 @@ alter table digest_subscriber enable row level security;
 drop policy if exists report_public_read on report;
 create policy report_public_read on report
   for select
-  using (status in ('dilaporkan_komuniti', 'dipertikai') and disemak_pada is not null);
+  using (
+    status in ('dilaporkan_komuniti', 'dipertikai')
+    and disemak_pada is not null
+    and ditolak_pada is null
+    and dibuang_pada is null
+  );
 
 -- ...dan hanya LAJUR yang selamat. Kontak pelapor serta URL bukti tidak boleh
 -- didedahkan walaupun barisnya tersiar, jadi kebenaran diberi per lajur.
@@ -234,7 +252,7 @@ begin
   if exists (select 1 from pg_roles where rolname = 'anon') then
     revoke all on report from anon, authenticated;
     grant select (
-      id, jenis_kenalan, nilai_kenalan, kategori_id, penerangan,
+      id, jenis_kenalan, nilai_kenalan, kategori_slug, penerangan,
       status, bilangan_sokongan, tarikh_hantar
     ) on report to anon, authenticated;
   end if;
@@ -249,14 +267,16 @@ create or replace view report_public
     id,
     jenis_kenalan,
     nilai_kenalan,
-    kategori_id,
+    kategori_slug,
     penerangan,
     status,
     bilangan_sokongan,
     tarikh_hantar
   from report
   where status in ('dilaporkan_komuniti', 'dipertikai')
-    and disemak_pada is not null;
+    and disemak_pada is not null
+    and ditolak_pada is null
+    and dibuang_pada is null;
 
 drop policy if exists article_public_read on article;
 create policy article_public_read on article for select using (true);

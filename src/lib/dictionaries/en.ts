@@ -7,6 +7,7 @@ import type { Dictionary } from '../i18n';
 export const en: Dictionary = {
   meta: {
     title: 'Malaysia Scam Check Portal',
+    titlePendek: 'Scam Check',
     titleTemplate: '%s — Scam Check Portal',
     description:
       'Learn how the latest scams in Malaysia actually work, in plain language, and where to go for official verification.',
@@ -15,9 +16,13 @@ export const en: Dictionary = {
     skip: 'Skip to main content',
     home: 'Home',
     taktik: 'Scam tactics',
+    taktikPendek: 'Tactics',
     semak: 'Check',
     bantuan: 'If you were scammed',
+    bantuanPendek: 'Help',
+    lapor: 'Report',
     tentang: 'About',
+    moderasi: 'Moderation',
     menu: 'Menu',
   },
   lang: {
@@ -29,8 +34,8 @@ export const en: Dictionary = {
   },
   banner: {
     text: 'A community portal — not an official government site.',
-    cta: 'Official check: Semak Mule (PDRM)',
-    urgent: 'Just been scammed? Call 997 now.',
+    cta: 'Semak Mule (PDRM)',
+    urgent: 'Just scammed? Call 997',
   },
   common: {
     kemasKini: 'Updated',
@@ -130,11 +135,18 @@ export const en: Dictionary = {
     semakMuleCta: 'Run the official check on Semak Mule',
     semakMuleNota: 'External link to semakmule.rmp.gov.my (the official PDRM site).',
     komunitiTitle: 'Community reports',
-    komunitiBelumAda:
-      'The community report module is not open yet. In this MVP no public reports are shown — so the absence of reports here does NOT mean something is safe.',
-    komunitiStatusCta: 'How report statuses will work',
-    laporCta: 'Report this number',
-    laporNota: 'For now this button takes you to the official reporting channels.',
+    komunitiMenyemak: 'Checking community reports…',
+    komunitiTiada:
+      'No community reports match. That does NOT mean it is safe — most numbers used in scams have never been reported by anyone.',
+    komunitiAda: '{n} community reports match this detail.',
+    komunitiLihat: 'View reports',
+    komunitiPrivasi:
+      'This check uses partial matching: your browser sends only the first 5 characters of the detail’s fingerprint, so the server never learns what you searched for.',
+    komunitiRalat: 'The community report check could not run right now. Please use the official check below.',
+    komunitiStatusCta: 'How report statuses work',
+    laporCta: 'Report to the community',
+    laporNota:
+      'A community report is an early warning, not a police report. For a case that just happened, call 997 first.',
     kinds: {
       telefon: 'Phone number',
       akaun_bank: 'Bank account number',
@@ -249,11 +261,11 @@ export const en: Dictionary = {
   laporan: {
     title: 'Community report status system',
     lead:
-      'The community report module is not open in this version. We are publishing the status design early so you know what each label will mean when it goes live.',
+      'Every community report carries one of the three statuses below. None of them means a crime has been confirmed — only the police and the courts can determine that.',
     kenapaTitle: 'Why these labels matter',
     kenapaLead:
       'A single public report is not proof of a crime. The wrong label can destroy the name of someone innocent — including victims whose accounts were stolen and used as mule accounts. That is why none of the statuses below means “confirmed”.',
-    statusTitle: 'The three statuses we will use',
+    statusTitle: 'The three statuses we use',
     peraturanTitle: 'Fixed rules',
     peraturan: [
       'No report is published automatically. Every report is reviewed by a moderator first.',
@@ -310,16 +322,21 @@ export const en: Dictionary = {
     kumpul: [
       { apa: 'Language preference', kenapa: 'To remember whether you want BM or EN.', simpan: 'A cookie kept for 1 year. It contains no user identifier.' },
       { apa: 'Basic server logs', kenapa: 'Needed to serve the site and detect abuse.', simpan: 'Handled by our hosting provider under their defaults. We do not use them to profile users.' },
+      { apa: 'Community report content', kenapa: 'To assess the report and, if published, warn other people early.', simpan: 'Two years from the report date, then deleted if no longer needed.' },
+      { apa: 'Reporter email (optional)', kenapa: 'So a moderator can contact you if the report needs clarification.', simpan: 'With the report. Never shown to the public.' },
+      { apa: 'Evidence images (optional)', kenapa: 'To help moderators assess the report.', simpan: 'Moderator access only. Image metadata is stripped before storage.' },
+      { apa: 'Right-of-reply objection details', kenapa: 'To handle the objection and tell you the outcome.', simpan: 'With the objection record and its related audit log.' },
     ],
-    fasaTitle: 'When the community report module opens',
+    fasaTitle: 'When you submit a community report',
     fasaLead:
-      'The report module is not active. When it opens, the following principles will apply and this notice will be updated with full details before any data is collected.',
+      'The report form collects personal data, so the following principles apply to every report submitted.',
     fasa: [
-      'The report form will only ask for what is genuinely needed to assess a report.',
-      'Giving contact details is optional. Anonymous reports are accepted.',
-      'PDPA consent is asked for explicitly via a checkbox before submission, not buried in terms.',
-      'Uploaded evidence is stored with access restricted to moderators only.',
-      'Personal data no longer needed for its original purpose is deleted.',
+      'The form only asks for what is genuinely needed to assess a report.',
+      'Giving an email is optional. Anonymous reports are fully accepted.',
+      'PDPA consent is asked for via a checkbox before submission, not buried in terms.',
+      'Uploaded evidence can only be viewed by signed-in moderators. Image metadata, including GPS coordinates, is stripped automatically before the file is stored.',
+      'A reporter’s email is never shown to the public.',
+      'Personal data is kept for two years from the report date, then deleted if it is no longer needed.',
       'You can ask for access, correction or deletion of your data at any time.',
     ],
     hakTitle: 'Your rights',
@@ -348,21 +365,23 @@ export const en: Dictionary = {
     bezaKami: [
       'An encyclopedia of scam playbooks in plain language.',
       'A check tool that explains the correct official step for each kind of detail.',
-      'A community report layer as an early warning (future phase), with statuses that never confirm a crime.',
+      'A community report layer as an early warning, with statuses that never confirm a crime.',
     ],
     fasaTitle: 'Development phases',
     fasaSekarang: 'Current version (MVP)',
     fasaSekarangItems: [
       'Encyclopedia of scam playbooks with the core categories',
       'A check tool that points out to Semak Mule',
+      'Community reports with mandatory moderation before publication',
+      'A moderation dashboard with an audit log',
       'A step-by-step “if you have been scammed” guide',
       'PDPA privacy notice and a working right-of-reply channel',
     ],
     fasaSeterusnya: 'Future phases',
     fasaSeterusnyaItems: [
-      'Full community report form with a moderation dashboard and audit log',
       'Automated news feed and an opt-in weekly email digest',
       'User accounts so people can track the status of their own reports',
+      'Moderator sign-in through organisational SSO',
     ],
     kandunganTitle: 'Where this content comes from',
     kandunganLead:
@@ -377,6 +396,132 @@ export const en: Dictionary = {
     sumbanganTitle: 'Contributions and corrections',
     sumbanganLead:
       'Found something wrong or out of date? Tell us. Factual corrections are a priority.',
+  },
+  lapor: {
+    title: 'Report to the community',
+    lead:
+      'Your report becomes an early warning for other people. A moderator reviews it first, and it will never be labelled as confirmation of a crime.',
+    amaranTitle: 'Read this before you send',
+    amaran: [
+      'This is not a police report. For a case that just happened, call NSRC 997 and file a police report — that is what enables an investigation and an account freeze.',
+      'Write only what actually happened to you. Do not accuse, and do not copy someone else’s story.',
+      'Do not include IC numbers, full bank card numbers, or other people’s personal details that are not relevant.',
+      'The named party has the right to object and explain. Reports that cannot be supported are removed.',
+    ],
+    medan: {
+      jenis: 'Type of detail',
+      jenisPilih: 'Choose one',
+      nilai: 'The detail being reported',
+      nilaiBantuan: 'For example: a phone number, bank account number, website address, or company name.',
+      kategori: 'Scam category',
+      kategoriKosong: 'I am not sure',
+      penerangan: 'What happened',
+      peneranganBantuan: 'Describe it in order. At least 20 characters.',
+      bukti: 'Evidence (optional)',
+      buktiBantuan:
+        'JPG, PNG or WEBP images, up to 3 files and 5 MB each. Image metadata including GPS location is stripped automatically before storage. Only moderators can view these files.',
+      emel: 'Your email (optional)',
+      emelBantuan:
+        'Used only if a moderator needs to clarify something about your report. Anonymous reports are fully accepted.',
+      pdpa:
+        'I understand this report will be reviewed by a moderator, and I consent to the information I provide being processed for that purpose under the Personal Data Protection Act 2010.',
+    },
+    jenis: {
+      telefon: 'Phone number',
+      akaun_bank: 'Bank account number',
+      url: 'Website / link',
+      syarikat: 'Company or business name',
+      profil_sosial: 'Social media profile',
+      lain: 'Other',
+    },
+    hantar: 'Send report',
+    menghantar: 'Sending…',
+    ralat: {
+      wajib: 'This field is required.',
+      terlalu_pendek: 'Too short. Please give a little more detail.',
+      terlalu_panjang: 'Too long. Please shorten it.',
+      tidak_sah: 'This value is not valid.',
+      pdpa: 'Consent is required before the report can be sent.',
+      umum: 'The report could not be sent. Please try again.',
+      kadar: 'Too many reports sent from this device. Please try again shortly.',
+      bukti_jenis: 'Only JPG, PNG or WEBP image files are accepted.',
+      bukti_saiz: 'File too large. Maximum 5 MB each.',
+      bukti_banyak: 'Maximum 3 evidence files.',
+    },
+    jayaTitle: 'Your report has been received',
+    jayaLead:
+      'Your report is now in the review queue. It is not shown to the public and will not be until a moderator has reviewed it.',
+    jayaLangkah: [
+      'A moderator reviews your report by hand.',
+      'If it is published, it is labelled “Reported by community” — not confirmation of a crime.',
+      'The named party can object, and their explanation will be shown alongside the report.',
+    ],
+    jayaRasmi: 'If you lost money, do not stop here. Call 997 and file a police report.',
+    kembali: 'Back to the home page',
+  },
+  laporanAwam: {
+    title: 'Community report',
+    tidakDijumpai: 'This report was not found or has not been published.',
+    dilaporkanPada: 'Reported on',
+    kategoriLabel: 'Category',
+    jenisLabel: 'Type of detail',
+    peneranganLabel: 'What was reported',
+    penafian:
+      'This is a report from a member of the public, not an official record. It does not mean a crime has been confirmed. For an official check, use Semak Mule (PDRM).',
+    sokongTitle: 'Did the same thing happen to you?',
+    sokongLead:
+      'If you also encountered the same thing with this detail, you can support this report. The number of reporters is shown, but the status stays “reported”.',
+    sokongCta: 'This happened to me too',
+    sokongJaya: 'Thank you. Your support has been recorded.',
+    bantahTitle: 'Is this about you or your business?',
+    bantahLead:
+      'You have the right to object and explain. This report will be marked “Disputed” while we review it, and your explanation will be shown alongside it.',
+    bantahCta: 'Send an objection',
+    bantahNama: 'Your name',
+    bantahEmel: 'Email we can reply to',
+    bantahHujah: 'Your explanation',
+    bantahPdpa:
+      'I consent to my contact details being processed solely for the purpose of handling this objection.',
+    bantahJaya:
+      'Your objection has been received. This report is now marked “Disputed” and we will contact you within 3 working days.',
+    bantahSedia: 'Response from the named party',
+  },
+  moderasi: {
+    title: 'Moderation dashboard',
+    lead: 'Review community reports before they are shown to the public.',
+    masukTitle: 'Moderator sign in',
+    masukId: 'Moderator ID',
+    masukToken: 'Token',
+    masukCta: 'Sign in',
+    masukGagal: 'Invalid ID or token.',
+    masukLalai:
+      'The development demo account is in use (ID “demo”). Set MODERATOR_AKAUN and SESSION_SECRET before launch.',
+    masukTiada:
+      'Moderation is not configured. Set MODERATOR_AKAUN in the server environment before using this dashboard.',
+    keluar: 'Sign out',
+    sebagai: 'Signed in as',
+    giliranTitle: 'Review queue',
+    giliranKosong: 'No reports are waiting for review.',
+    tersiarTitle: 'Published reports',
+    tersiarKosong: 'No reports have been published yet.',
+    logTitle: 'Audit log',
+    logKosong: 'No actions recorded yet.',
+    logLajur: { tarikh: 'Date', moderator: 'Moderator', tindakan: 'Action', laporan: 'Report', sebab: 'Reason' },
+    buktiTitle: 'Evidence',
+    buktiTiada: 'No evidence attached.',
+    sebabLabel: 'Note (optional)',
+    tindakan: {
+      terima: 'Publish as reported',
+      tolak: 'Reject',
+      tanda_dipertikai: 'Mark disputed',
+      buang: 'Remove',
+      buka_semula: 'Reopen',
+    },
+    tindakanNota:
+      'Every action is written to the audit log with your ID and the time. Publish only if the report is clear enough and does not accuse an unrelated party.',
+    pelaporEmel: 'Reporter email',
+    tanpaNama: 'Anonymous',
+    sokongan: 'Supporters',
   },
   footer: {
     tentang: 'About the portal',

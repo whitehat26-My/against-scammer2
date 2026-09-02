@@ -29,10 +29,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="card stack" aria-labelledby="semak-cepat">
+      <section className="panel stack" aria-labelledby="semak-cepat">
         <h2 id="semak-cepat">{d.home.searchTitle}</h2>
         <p className="muted">{d.home.searchLead}</p>
-        <SearchTool d={d.semak} compact />
+        <SearchTool d={d.semak} lang={lang} compact />
       </section>
 
       <section className="stack" aria-labelledby="taktik-utama">
@@ -42,7 +42,7 @@ export default async function HomePage() {
         <p className="muted">{d.home.taktikLead}</p>
         <div className="grid grid--2">
           {categories.map((c) => (
-            <Link key={c.slug} href={`/taktik/${c.slug}`} className="card card--link">
+            <Link key={c.slug} href={`/taktik/${c.slug}`} className="panel card--link">
               <div className="chips" style={{ marginBottom: '0.6rem' }}>
                 <span className={`badge badge--${c.risiko}`}>{RISK_LABEL[c.risiko][lang]}</span>
               </div>

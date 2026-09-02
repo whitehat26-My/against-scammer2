@@ -55,7 +55,7 @@ export default async function KategoriPage({ params }: Params) {
       </header>
 
       {entry.red_flags.length > 0 ? (
-        <section className="card stack" aria-labelledby="red-flags">
+        <section className="panel stack" aria-labelledby="red-flags">
           <h2 id="red-flags">{d.common.redFlags}</h2>
           <ul className="flaglist">
             {entry.red_flags.map((flag) => (
@@ -91,7 +91,7 @@ export default async function KategoriPage({ params }: Params) {
         </section>
       ) : null}
 
-      <section className="card stack" aria-labelledby="dah-kena">
+      <section className="panel stack" aria-labelledby="dah-kena">
         <h2 id="dah-kena">{d.taktik.langkahPantasTitle}</h2>
         {entry.langkah_pantas.length > 0 ? (
           <ol>

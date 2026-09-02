@@ -12,8 +12,8 @@ export function Callout({
   children: ReactNode;
 }) {
   return (
-    <div className={`callout callout--${tone}`}>
-      {title ? <p className="callout__title">{title}</p> : null}
+    <div className={`notis notis--${tone}`}>
+      {title ? <p className="notis__title">{title}</p> : null}
       {children}
     </div>
   );

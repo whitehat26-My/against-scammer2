@@ -20,7 +20,7 @@ export default async function SemakPage() {
         <p className="hero__lead">{d.semak.lead}</p>
       </header>
 
-      <SearchTool d={d.semak} />
+      <SearchTool d={d.semak} lang={lang} />
 
       <Callout tone="amaran" title={d.home.hadTitle}>
         <ul style={{ marginBottom: 0 }}>

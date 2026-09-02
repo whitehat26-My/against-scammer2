@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import './globals.css';
-import { SiteFooter, SiteHeader, TopBanner } from '@/components/SiteChrome';
+import { SiteBottomNav, SiteFooter, SiteHeader } from '@/components/SiteChrome';
 import { dict, getLang, htmlLang } from '@/lib/i18n';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -33,10 +33,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <a className="skip-link" href="#kandungan">
           {d.nav.skip}
         </a>
-        <TopBanner lang={lang} />
         <SiteHeader lang={lang} />
         <main id="kandungan">{children}</main>
         <SiteFooter lang={lang} />
+        <SiteBottomNav lang={lang} />
       </body>
     </html>
   );

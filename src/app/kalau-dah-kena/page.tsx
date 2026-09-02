@@ -47,7 +47,7 @@ export default async function KalauDahKenaPage() {
         </ol>
       </section>
 
-      <section className="card stack" aria-labelledby="siapkan">
+      <section className="panel stack" aria-labelledby="siapkan">
         <h2 id="siapkan">{d.bantuan.siapkanTitle}</h2>
         <ul>
           {d.bantuan.siapkan.map((item) => (
@@ -77,7 +77,7 @@ export default async function KalauDahKenaPage() {
         </Callout>
       </section>
 
-      <section className="card stack" aria-labelledby="emosi">
+      <section className="panel stack" aria-labelledby="emosi">
         <h2 id="emosi">{d.bantuan.emosiTitle}</h2>
         <p className="muted">{d.bantuan.emosiLead}</p>
         <div className="btnrow">
