@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useId, useRef, useState } from 'react';
 import { classifyQuery, type QueryClassification } from '@/lib/query';
 import { SEMAK_MULE_URL } from '@/lib/official';
+import { SLUG_PAUTAN_PHISHING } from '@/lib/config';
 import type { Dictionary } from '@/lib/i18n';
 
 type Props = {
@@ -163,6 +164,11 @@ function SearchResult({
               {d.hints.tiada}
             </p>
           )}
+          <div className="btnrow">
+            <Link className="btn btn--secondary" href={`/taktik/${SLUG_PAUTAN_PHISHING}`}>
+              {d.hints.pelajariCta}
+            </Link>
+          </div>
         </section>
       ) : null}
 

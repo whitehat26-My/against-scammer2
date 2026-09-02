@@ -11,3 +11,9 @@ export const PRIVASI_KEMAS_KINI = '2026-08-15';
 
 /** URL kanonik laman (untuk sitemap & robots). */
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://contoh-portal-scam.my';
+
+/**
+ * Slug entri ensiklopedia yang dirujuk secara langsung oleh kod.
+ * Ujian `tests/content.test.ts` memastikan entri ini benar-benar wujud.
+ */
+export const SLUG_PAUTAN_PHISHING = 'pautan-phishing';

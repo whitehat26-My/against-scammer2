@@ -19,13 +19,15 @@ perkara yang sistem rasmi tidak buat secara terbuka:
 Siap dan berfungsi:
 
 - Halaman utama
-- **Ensiklopedia** `/taktik` dan `/taktik/[kategori]` — 6 kategori lengkap
+- **Ensiklopedia** `/taktik` dan `/taktik/[kategori]` — 7 kategori lengkap
   (love scam, Macau scam, job scam, parcel scam, pelaburan/kripto, penyamaran
-  pegawai kerajaan & bank), dengan carian dan tapisan ikut platform serta
-  tahap risiko
+  pegawai kerajaan & bank, pautan phishing), dengan carian dan tapisan ikut
+  platform serta tahap risiko
 - **Alat semakan** `/semak` — mengenal pasti jenis input (telefon / akaun bank /
   URL / nama syarikat), memberi panduan khusus, dan sentiasa merujuk keluar ke
-  Semak Mule. Tiada pangkalan data rekod jenayah dibina atau ditiru.
+  Semak Mule. Untuk input jenis URL ia turut memaparkan petunjuk teknikal
+  heuristik dan memaut ke entri ensiklopedia *Pautan phishing*. Tiada
+  pangkalan data rekod jenayah dibina atau ditiru.
 - **`/kalau-dah-kena`** — langkah 997 langkah demi langkah dan saluran rasmi
 - **`/status-laporan`** — reka bentuk sistem status laporan komuniti
 - **`/privasi`** — notis privasi PDPA 2010

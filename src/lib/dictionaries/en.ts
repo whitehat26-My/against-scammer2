@@ -169,6 +169,7 @@ export const en: Dictionary = {
       title: 'Automatic observations about this address',
       lead:
         'These are quick technical observations about the address you entered — not confirmation that it is a scam. A site with no observations can still be dangerous.',
+      pelajariCta: 'Learn to spot phishing links',
       tiada: 'No technical warning signs detected in this address. That still does not mean the site is safe.',
       codes: {
         bukan_https: 'The address uses http:// instead of https:// — the connection is not encrypted.',

@@ -5,10 +5,13 @@ import { getCategorySummaries } from '@/lib/content';
 import { dict, getLang } from '@/lib/i18n';
 import { PLATFORM_LABEL, RISK_LABEL } from '@/lib/taxonomy';
 
+/** Berapa banyak kategori dipaparkan di halaman utama sebelum "lihat semua". */
+const KATEGORI_DI_HALAMAN_UTAMA = 8;
+
 export default async function HomePage() {
   const lang = await getLang();
   const d = dict(lang);
-  const categories = getCategorySummaries(lang).slice(0, 6);
+  const categories = getCategorySummaries(lang).slice(0, KATEGORI_DI_HALAMAN_UTAMA);
 
   return (
     <div className="container page stack-xl">

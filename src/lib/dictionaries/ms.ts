@@ -172,6 +172,7 @@ export const ms = {
       title: 'Petunjuk automatik pada alamat ini',
       lead:
         'Ini pemerhatian teknikal ringkas pada alamat yang anda masukkan — bukan pengesahan bahawa ia scam. Laman yang tiada petunjuk pun boleh jadi berbahaya.',
+      pelajariCta: 'Belajar kenal pautan phishing',
       tiada: 'Tiada petunjuk teknikal dikesan pada alamat ini. Ia tetap tidak bermakna laman ini selamat.',
       codes: {
         bukan_https: 'Alamat menggunakan http:// dan bukan https:// — sambungan tidak disulitkan.',

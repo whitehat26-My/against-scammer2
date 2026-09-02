@@ -16,6 +16,7 @@ export const PLATFORMS = [
   'aplikasi-dating',
   'e-mel',
   'laman-web',
+  'kod-qr',
 ] as const;
 
 export type PlatformId = (typeof PLATFORMS)[number];
@@ -30,6 +31,7 @@ export const PLATFORM_LABEL: Record<PlatformId, { ms: string; en: string }> = {
   'aplikasi-dating': { ms: 'Aplikasi dating', en: 'Dating apps' },
   'e-mel': { ms: 'E-mel', en: 'Email' },
   'laman-web': { ms: 'Laman web palsu', en: 'Fake websites' },
+  'kod-qr': { ms: 'Kod QR', en: 'QR codes' },
 };
 
 export const RISK_LEVELS = ['sederhana', 'tinggi', 'sangat-tinggi'] as const;

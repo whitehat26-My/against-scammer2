@@ -26,6 +26,14 @@ export type { ContohTaktik, ScamCategory, ScamCategorySummary } from './kategori
 
 marked.setOptions({ gfm: true, breaks: false });
 
+/**
+ * Jadual dalam kandungan Markdown dibalut supaya ia boleh ditatal secara
+ * mendatar pada telefon, dan bukan memaksa keseluruhan halaman menatal.
+ */
+function balutJadual(html: string): string {
+  return html.replace(/<table>/g, '<div class="tablewrap"><table>').replace(/<\/table>/g, '</table></div>');
+}
+
 function asStringArray(value: unknown, field: string, file: string): string[] {
   if (value === undefined || value === null) return [];
   if (!Array.isArray(value) || value.some((v) => typeof v !== 'string')) {
@@ -119,7 +127,7 @@ export function getCategory(slug: string, lang: Lang): ScamCategory | undefined 
     langkah_pantas: asStringArray(data.langkah_pantas, 'langkah_pantas', file),
     kemas_kini: requireString(data.kemas_kini ?? '', 'kemas_kini', file),
     susunan: typeof data.susunan === 'number' ? data.susunan : 99,
-    html: marked.parse(content, { async: false }),
+    html: balutJadual(marked.parse(content, { async: false })),
     langSumber: found.langSumber,
   };
 }

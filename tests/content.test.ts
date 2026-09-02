@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { getAllCategories, getCategory, listCategorySlugs } from '@/lib/content';
 import { PLATFORMS, RISK_LEVELS } from '@/lib/taxonomy';
 import { LANGUAGES } from '@/lib/i18n';
+import { SLUG_PAUTAN_PHISHING } from '@/lib/config';
 
 const slugs = listCategorySlugs();
 
@@ -61,6 +62,13 @@ describe('kandungan ensiklopedia', () => {
       expect(en?.risiko).toBe(ms?.risiko);
       expect(en?.platform).toEqual(ms?.platform);
       expect(en?.susunan).toBe(ms?.susunan);
+    }
+  });
+
+  it('mempunyai entri untuk setiap slug yang dirujuk terus oleh kod', () => {
+    // Alat semakan memaut ke entri ini daripada hasil jenis URL.
+    for (const lang of LANGUAGES) {
+      expect(getCategory(SLUG_PAUTAN_PHISHING, lang), SLUG_PAUTAN_PHISHING).toBeDefined();
     }
   });
 
