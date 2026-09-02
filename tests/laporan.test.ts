@@ -195,6 +195,63 @@ describe('kitaran hayat laporan', () => {
   });
 });
 
+describe('langganan digest (double opt-in)', () => {
+  it('langganan baharu belum disahkan', async () => {
+    const store = await storBaharu();
+    const langganan = await store.langgan('Orang@Contoh.MY');
+    expect(langganan.emel).toBe('orang@contoh.my');
+    expect(langganan.disahkan_pada).toBeNull();
+    expect(await store.bilanganLangganan()).toBe(0);
+  });
+
+  it('hanya aktif selepas token pengesahan digunakan', async () => {
+    const store = await storBaharu();
+    const langganan = await store.langgan('orang@contoh.my');
+    expect(await store.sahkanLangganan(langganan.token_sah)).toBe(true);
+    expect(await store.bilanganLangganan()).toBe(1);
+  });
+
+  it('menolak token pengesahan yang tidak sah', async () => {
+    const store = await storBaharu();
+    await store.langgan('orang@contoh.my');
+    expect(await store.sahkanLangganan('token-palsu')).toBe(false);
+    expect(await store.sahkanLangganan('3f2504e0-4f89-11d3-9a0c-0305e82c3301')).toBe(false);
+    expect(await store.bilanganLangganan()).toBe(0);
+  });
+
+  it('permintaan berulang menjana token baharu dan membatalkan yang lama', async () => {
+    const store = await storBaharu();
+    const pertama = await store.langgan('orang@contoh.my');
+    const kedua = await store.langgan('orang@contoh.my');
+
+    expect(kedua.id).toBe(pertama.id);
+    expect(kedua.token_sah).not.toBe(pertama.token_sah);
+    expect(await store.sahkanLangganan(pertama.token_sah)).toBe(false);
+    expect(await store.sahkanLangganan(kedua.token_sah)).toBe(true);
+  });
+
+  it('tidak menghantar pengesahan semula untuk langganan yang sudah disahkan', async () => {
+    const store = await storBaharu();
+    const langganan = await store.langgan('orang@contoh.my');
+    await store.sahkanLangganan(langganan.token_sah);
+
+    const lagi = await store.langgan('orang@contoh.my');
+    expect(lagi.disahkan_pada).not.toBeNull();
+    expect(lagi.token_sah).toBe(langganan.token_sah);
+  });
+
+  it('berhenti melanggan membuang alamat sepenuhnya', async () => {
+    const store = await storBaharu();
+    const langganan = await store.langgan('orang@contoh.my');
+    await store.sahkanLangganan(langganan.token_sah);
+
+    expect(await store.berhentiLangganan(langganan.token_batal)).toBe(true);
+    expect(await store.bilanganLangganan()).toBe(0);
+    // Token yang sama tidak boleh digunakan dua kali.
+    expect(await store.berhentiLangganan(langganan.token_batal)).toBe(false);
+  });
+});
+
 describe('validasi borang', () => {
   function borang(ubah: Record<string, string> = {}): FormData {
     const data = new FormData();

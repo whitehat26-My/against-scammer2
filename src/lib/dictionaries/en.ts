@@ -21,6 +21,7 @@ export const en: Dictionary = {
     bantuan: 'If you were scammed',
     bantuanPendek: 'Help',
     lapor: 'Report',
+    berita: 'News',
     tentang: 'About',
     moderasi: 'Moderation',
     menu: 'Menu',
@@ -326,6 +327,7 @@ export const en: Dictionary = {
       { apa: 'Reporter email (optional)', kenapa: 'So a moderator can contact you if the report needs clarification.', simpan: 'With the report. Never shown to the public.' },
       { apa: 'Evidence images (optional)', kenapa: 'To help moderators assess the report.', simpan: 'Moderator access only. Image metadata is stripped before storage.' },
       { apa: 'Right-of-reply objection details', kenapa: 'To handle the objection and tell you the outcome.', simpan: 'With the objection record and its related audit log.' },
+      { apa: 'Digest email address (opt-in)', kenapa: 'To send the weekly digest you asked for.', simpan: 'Until you unsubscribe. Unsubscribing deletes your address entirely rather than just flagging it.' },
     ],
     fasaTitle: 'When you submit a community report',
     fasaLead:
@@ -374,12 +376,14 @@ export const en: Dictionary = {
       'A check tool that points out to Semak Mule',
       'Community reports with mandatory moderation before publication',
       'A moderation dashboard with an audit log',
+      'A news & advisories feed tagged with the encyclopedia categories',
+      'A weekly email digest with double opt-in',
       'A step-by-step “if you have been scammed” guide',
       'PDPA privacy notice and a working right-of-reply channel',
     ],
     fasaSeterusnya: 'Future phases',
     fasaSeterusnyaItems: [
-      'Automated news feed and an opt-in weekly email digest',
+      'Automated news ingestion from official media statements',
       'User accounts so people can track the status of their own reports',
       'Moderator sign-in through organisational SSO',
     ],
@@ -522,6 +526,64 @@ export const en: Dictionary = {
     pelaporEmel: 'Reporter email',
     tanpaNama: 'Anonymous',
     sokongan: 'Supporters',
+  },
+  berita: {
+    title: 'News & advisories feed',
+    lead:
+      'Short summaries of current tactics and official channels, tagged with the same categories as the encyclopedia. Every entry links back to its original source.',
+    cariPlaceholder: 'Search titles or sources',
+    tapisTag: 'Filter by category',
+    hasil: '{n} entries shown',
+    tiada: 'No entries match your filters.',
+    kosongkan: 'Clear filters',
+    jenisLabel: {
+      berita: 'News',
+      amaran: 'Advisory',
+    },
+    jenisNota: {
+      berita: 'A summary of something published elsewhere. Read the original source for full details.',
+      amaran: 'An advisory written by this portal’s team, not a report of an event.',
+    },
+    sumberLabel: 'Source',
+    bacaSumber: 'Read at the original source',
+    sumberNota:
+      'We summarise in our own words and do not copy full text. For official details, go to the original source.',
+    kembali: 'Back to the feed',
+    tidakDijumpai: 'This entry was not found.',
+    kategoriBerkaitan: 'Related categories',
+    beritaUntukKategori: 'Related news & advisories',
+    lihatSemua: 'Open the news feed',
+  },
+  digest: {
+    title: 'Weekly email digest',
+    lead:
+      'One email a week with new entries. No ads, your address is never shared, and you can stop at any time.',
+    emel: 'Your email address',
+    emelBantuan: 'We use it only to send this digest.',
+    pdpa:
+      'I consent to my email address being processed for the purpose of sending this weekly digest under the Personal Data Protection Act 2010.',
+    hantar: 'Subscribe to the digest',
+    menghantar: 'Sending…',
+    jaya:
+      'If that address can be subscribed, we have sent a confirmation email. The subscription is only active once you click the link inside it.',
+    nota:
+      'We do not say whether an address is already on the list — the same answer is given every time, so this form cannot be used to test someone else’s address.',
+    ralat: {
+      emel: 'That email address is not valid.',
+      pdpa: 'Consent is required before you can subscribe.',
+      kadar: 'Too many attempts from this device. Please try again shortly.',
+      umum: 'The subscription could not be processed right now. Please try again.',
+    },
+    sahkanTitle: 'Subscription confirmation',
+    sahkanJaya: 'Your subscription is confirmed. You will receive the next weekly digest.',
+    sahkanGagal:
+      'This confirmation link is not valid, or it was replaced by a more recent request. Please subscribe again.',
+    berhentiTitle: 'Unsubscribe',
+    berhentiJaya: 'You have been unsubscribed and your email address has been deleted from our list.',
+    berhentiGagal: 'This link is not valid, or the address has already been removed.',
+    emelSubjek: 'Confirm your Scam Check Portal digest subscription',
+    emelTeks:
+      'Someone asked for the Malaysia Scam Check Portal weekly digest to be sent to this address.\n\nIf that was you, confirm here:\n{sahkan}\n\nIf it was not you, ignore this email — nothing is sent without confirmation.\n\nTo stop later:\n{berhenti}',
   },
   footer: {
     tentang: 'About the portal',

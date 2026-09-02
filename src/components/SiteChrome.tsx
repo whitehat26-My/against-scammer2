@@ -12,6 +12,7 @@ function itemNav(lang: Lang): NavItem[] {
     { href: '/semak', label: d.nav.semak, ikon: 'semak' },
     { href: '/lapor', label: d.nav.lapor, ikon: 'lapor' },
     { href: '/kalau-dah-kena', label: d.nav.bantuan, labelPendek: d.nav.bantuanPendek, ikon: 'bantuan' },
+    { href: '/berita', label: d.nav.berita },
     { href: '/tentang', label: d.nav.tentang },
   ];
 }
@@ -80,6 +81,9 @@ export function SiteFooter({ lang }: { lang: Lang }) {
                 </li>
                 <li>
                   <Link href="/lapor">{d.nav.lapor}</Link>
+                </li>
+                <li>
+                  <Link href="/berita">{d.nav.berita}</Link>
                 </li>
               </ul>
             </div>

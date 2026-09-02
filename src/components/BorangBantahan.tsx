@@ -26,6 +26,7 @@ export function BorangBantahan({
   const [keadaan, tindakan] = useActionState<KeadaanBantahan, FormData>(hantarBantahan, {});
   const [buka, setBuka] = useState(false);
   const id = useId();
+  const semula = keadaan.semula;
 
   if (keadaan.ok) {
     return (
@@ -62,7 +63,14 @@ export function BorangBantahan({
         <label className="field__label" htmlFor={`${id}-nama`}>
           {d.bantahNama}
         </label>
-        <input id={`${id}-nama`} name="pembantah_nama" className="input" type="text" required />
+        <input
+          id={`${id}-nama`}
+          name="pembantah_nama"
+          className="input"
+          type="text"
+          defaultValue={semula?.pembantah_nama ?? ''}
+          required
+        />
         {ralat('pembantah_nama') ? <p className="ralat">{ralat('pembantah_nama')}</p> : null}
       </div>
 
@@ -70,7 +78,14 @@ export function BorangBantahan({
         <label className="field__label" htmlFor={`${id}-emel`}>
           {d.bantahEmel}
         </label>
-        <input id={`${id}-emel`} name="pembantah_emel" className="input" type="email" required />
+        <input
+          id={`${id}-emel`}
+          name="pembantah_emel"
+          className="input"
+          type="email"
+          defaultValue={semula?.pembantah_emel ?? ''}
+          required
+        />
         {ralat('pembantah_emel') ? <p className="ralat">{ralat('pembantah_emel')}</p> : null}
       </div>
 
@@ -78,13 +93,20 @@ export function BorangBantahan({
         <label className="field__label" htmlFor={`${id}-hujah`}>
           {d.bantahHujah}
         </label>
-        <textarea id={`${id}-hujah`} name="hujah" className="input" rows={5} required />
+        <textarea
+          id={`${id}-hujah`}
+          name="hujah"
+          className="input"
+          rows={5}
+          defaultValue={semula?.hujah ?? ''}
+          required
+        />
         {ralat('hujah') ? <p className="ralat">{ralat('hujah')}</p> : null}
       </div>
 
       <div className="field field--semak">
         <label className="semak-label">
-          <input type="checkbox" name="pdpa" value="ya" required />
+          <input type="checkbox" name="pdpa" value="ya" defaultChecked={semula?.pdpa ?? false} required />
           <span>{d.bantahPdpa}</span>
         </label>
         {ralat('pdpa') ? <p className="ralat">{ralat('pdpa')}</p> : null}

@@ -179,6 +179,9 @@ create table if not exists article (
   id            uuid primary key default gen_random_uuid(),
   slug          text not null unique check (slug ~ '^[a-z0-9-]+$'),
   tajuk         text not null,
+  -- 'berita' = ringkasan sesuatu yang diterbitkan di tempat lain.
+  -- 'amaran'  = nota evergreen yang ditulis oleh pasukan portal sendiri.
+  jenis         text not null default 'berita' check (jenis in ('berita', 'amaran')),
   -- Ringkasan sahaja. Jangan salin teks penuh daripada sumber asal.
   ringkasan     text not null check (length(btrim(ringkasan)) between 40 and 1200),
   kategori_tags text[] not null default '{}',
@@ -197,6 +200,7 @@ create table if not exists digest_subscriber (
   emel           text not null unique,
   -- Double opt-in: langganan hanya aktif selepas pengesahan emel.
   disahkan_pada  timestamptz,
+  token_sah      uuid not null default gen_random_uuid(),
   token_batal    uuid not null default gen_random_uuid(),
   pdpa_persetujuan boolean not null check (pdpa_persetujuan is true),
   created_at     timestamptz not null default now()

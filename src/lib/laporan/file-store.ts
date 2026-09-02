@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import type { LaporanStore, PilihanSenarai, TindakanInput } from './store';
+import type { DigestStore, LaporanStore, PilihanSenarai, TindakanInput } from './store';
 import {
   bolehTersiar,
   dalamGiliran,
@@ -14,14 +14,16 @@ import {
   type SokonganInput,
 } from './types';
 import { akhiranHash, awalanHash, awalanSah, hashNilai, normalkanNilai } from './nilai';
+import { normalkanEmel, tokenSah, type Langganan } from '@/lib/digest';
 
 type Data = {
   laporan: Laporan[];
   bantahan: Bantahan[];
   log: LogModerator[];
+  digest: Langganan[];
 };
 
-const KOSONG: Data = { laporan: [], bantahan: [], log: [] };
+const KOSONG: Data = { laporan: [], bantahan: [], log: [], digest: [] };
 
 export function dataDir(): string {
   return process.env.DATA_DIR ?? path.join(process.cwd(), '.data');
@@ -33,7 +35,7 @@ export function dataDir(): string {
  * Sesuai untuk pembangunan tempatan dan demo. Untuk produksi gunakan
  * `PgStore` dengan Postgres/Supabase — lihat `db/schema.sql`.
  */
-export class FileStore implements LaporanStore {
+export class FileStore implements LaporanStore, DigestStore {
   private readonly fail = path.join(dataDir(), 'laporan.json');
   /** Rantaian janji ringkas supaya tulisan serentak tidak merosakkan fail. */
   private giliranTulis: Promise<unknown> = Promise.resolve();
@@ -42,7 +44,12 @@ export class FileStore implements LaporanStore {
     try {
       const teks = await fs.readFile(this.fail, 'utf8');
       const data = JSON.parse(teks) as Partial<Data>;
-      return { laporan: data.laporan ?? [], bantahan: data.bantahan ?? [], log: data.log ?? [] };
+      return {
+        laporan: data.laporan ?? [],
+        bantahan: data.bantahan ?? [],
+        log: data.log ?? [],
+        digest: data.digest ?? [],
+      };
     } catch {
       return structuredClone(KOSONG);
     }
@@ -227,5 +234,56 @@ export class FileStore implements LaporanStore {
   async logModerator(had = 100): Promise<LogModerator[]> {
     const data = await this.baca();
     return data.log.slice(0, had);
+  }
+
+  // ---- Digest e-mel ----
+
+  async langgan(emel: string): Promise<Langganan> {
+    const alamat = normalkanEmel(emel);
+    return this.kemas((data) => {
+      const sedia = data.digest.find((l) => l.emel === alamat);
+      if (sedia) {
+        // Belum disahkan: jana token baharu supaya pautan lama tidak kekal sah.
+        if (!sedia.disahkan_pada) sedia.token_sah = randomUUID();
+        return sedia;
+      }
+      const baharu: Langganan = {
+        id: randomUUID(),
+        emel: alamat,
+        disahkan_pada: null,
+        token_sah: randomUUID(),
+        token_batal: randomUUID(),
+        pdpa_persetujuan: true,
+        created_at: new Date().toISOString(),
+      };
+      data.digest.push(baharu);
+      return baharu;
+    });
+  }
+
+  async sahkanLangganan(token: string): Promise<boolean> {
+    if (!tokenSah(token)) return false;
+    return this.kemas((data) => {
+      const langganan = data.digest.find((l) => l.token_sah === token);
+      if (!langganan) return false;
+      langganan.disahkan_pada ??= new Date().toISOString();
+      return true;
+    });
+  }
+
+  async berhentiLangganan(token: string): Promise<boolean> {
+    if (!tokenSah(token)) return false;
+    return this.kemas((data) => {
+      const index = data.digest.findIndex((l) => l.token_batal === token);
+      if (index === -1) return false;
+      // Berhenti bermakna data dibuang, bukan sekadar ditanda.
+      data.digest.splice(index, 1);
+      return true;
+    });
+  }
+
+  async bilanganLangganan(): Promise<number> {
+    const data = await this.baca();
+    return data.digest.filter((l) => l.disahkan_pada !== null).length;
   }
 }

@@ -38,6 +38,7 @@ describe.skipIf(!URL_DB)('storan Postgres', () => {
     await pool.query('delete from moderator_log');
     await pool.query('delete from dispute');
     await pool.query('delete from report');
+    await pool.query('delete from digest_subscriber');
     await pool.end();
   });
 
@@ -101,6 +102,23 @@ describe.skipIf(!URL_DB)('storan Postgres', () => {
     expect(bantahan?.laporan_id).toBe(laporan.id);
     expect((await store.dapatkan(laporan.id))?.status).toBe('dipertikai');
     expect(await store.bantahanUntuk(laporan.id)).toHaveLength(1);
+  });
+
+  it('langganan digest mengikut aliran double opt-in', async () => {
+    const langganan = await store.langgan('Orang@Contoh.MY');
+    expect(langganan.emel).toBe('orang@contoh.my');
+    expect(langganan.disahkan_pada).toBeNull();
+    expect(await store.bilanganLangganan()).toBe(0);
+
+    const kedua = await store.langgan('orang@contoh.my');
+    expect(kedua.id).toBe(langganan.id);
+    expect(kedua.token_sah).not.toBe(langganan.token_sah);
+    expect(await store.sahkanLangganan(langganan.token_sah)).toBe(false);
+    expect(await store.sahkanLangganan(kedua.token_sah)).toBe(true);
+    expect(await store.bilanganLangganan()).toBe(1);
+
+    expect(await store.berhentiLangganan(kedua.token_batal)).toBe(true);
+    expect(await store.bilanganLangganan()).toBe(0);
   });
 
   it('laporan yang dibuang tidak lagi muncul dalam carian julat', async () => {

@@ -35,14 +35,20 @@ Siap dan berfungsi:
   terima/tolak/tanda dipertikai/buang, dan log audit penuh
 - **Halaman laporan awam** `/laporan/[id]` — status, sokongan pelapor lain, dan
   borang hak menjawab yang menukar status kepada "Dipertikai"
+- **Suapan berita & amaran** `/berita` dan `/berita/[slug]` — entri pendek yang
+  ditag mengikut taksonomi ensiklopedia yang sama, dengan pautan silang dua
+  hala. Setiap entri meringkaskan dalam ayat sendiri dan memaut ke sumber asal.
+- **Digest e-mel mingguan** — langganan opt-in dengan pengesahan dua langkah,
+  dan pautan berhenti yang membuang alamat sepenuhnya
 - **`/kalau-dah-kena`** — langkah 997 langkah demi langkah dan saluran rasmi
 - **`/status-laporan`** — sistem status laporan komuniti
 - **`/privasi`** — notis privasi PDPA 2010
 - **`/hak-menjawab`** — saluran bantahan & permintaan PDPA
 - Bahasa Malaysia dengan toggle Bahasa Inggeris, mobile-first
 
-Fasa akan datang (belum dibina): suapan berita automatik + digest e-mel, akaun
-pengguna untuk menjejak laporan sendiri, dan log masuk moderator melalui SSO.
+Fasa akan datang (belum dibina): pengumpulan berita automatik daripada
+kenyataan media, akaun pengguna untuk menjejak laporan sendiri, dan log masuk
+moderator melalui SSO.
 
 ## Menjalankan projek
 
@@ -74,6 +80,7 @@ Semuanya ada nilai lalai untuk pembangunan. Tetapkan sebelum pelancaran sebenar:
 | `DATA_DIR` | Lokasi storan fail dan bukti imej. Lalai `.data/`. |
 | `MODERATOR_AKAUN` | Akaun moderator, format `id:token,id2:token2`. **Wajib dalam produksi** — tanpanya papan pemuka menolak semua log masuk. |
 | `SESSION_SECRET` | Rahsia HMAC untuk cookie sesi moderator. **Wajib dalam produksi.** |
+| `EMEL_PENGHANTAR` | Penghantar e-mel untuk digest. `log` menulis e-mel ke log pelayan (pembangunan). Tanpa nilai, borang digest tidak dipaparkan langsung. |
 
 Untuk menjalankan dengan Postgres:
 
@@ -115,6 +122,10 @@ src/lib/
     file-store.ts     Storan JSON (pembangunan)
     pg-store.ts       Storan Postgres/Supabase (produksi)
     bukti.ts          Pengesahan imej + pembuangan metadata EXIF
+  artikel.ts          Jenis & penapisan suapan berita (tulen)
+  berita.ts           Pemuat Markdown suapan berita (server sahaja)
+  digest.ts           Jenis & pengesahan langganan digest
+  emel.ts             Adaptor penghantar e-mel
 tests/                Ujian unit + integrasi
 ```
 
@@ -171,6 +182,30 @@ terhadap peraturan yang sama.
 Nota: "ditolak" dan "dibuang" bukan status awam. Ia disimpan sebagai cap masa
 berasingan supaya senarai status awam kekal tiga sahaja seperti direka.
 
+### Suapan berita: ringkaskan, jangan salin
+
+Setiap entri menyimpan ringkasan yang ditulis oleh pasukan portal sendiri
+(dihadkan kepada 1200 aksara oleh pemuat kandungan) bersama nama dan URL sumber
+asal. Halaman entri memaparkan butang "Baca di sumber asal" dan menyatakan
+dengan jelas bahawa teks penuh tidak disalin.
+
+Setiap entri dilabel sama ada `berita` (ringkasan sesuatu yang diterbitkan di
+tempat lain) atau `amaran` (nota evergreen yang ditulis oleh pasukan portal).
+Pembaca diberitahu perbezaannya pada setiap halaman entri, supaya nota kami
+sendiri tidak disalah anggap sebagai laporan peristiwa.
+
+Tag menggunakan slug ensiklopedia yang sama. Pemuat kandungan menolak tag yang
+tiada dalam ensiklopedia, jadi pautan silang tidak boleh reput secara senyap.
+
+### Digest e-mel
+
+- Double opt-in: langganan hanya aktif selepas pengguna klik pautan pengesahan.
+- Borang memberi jawapan yang sama sama ada alamat itu baharu atau sudah
+  dilanggan, jadi ia tidak boleh digunakan untuk menguji alamat orang lain.
+- Berhenti melanggan membuang baris tersebut, bukan menandanya.
+- Borang hanya dipaparkan apabila `EMEL_PENGHANTAR` dikonfigurasi — kami tidak
+  menjanjikan e-mel pengesahan yang tidak dapat dihantar.
+
 ### Data peribadi dalam laporan komuniti
 
 - Kontak pelapor adalah pilihan; laporan tanpa nama diterima sepenuhnya, dan
@@ -206,7 +241,12 @@ secara berkala. Kemas kini `DISEMAK_PADA` setiap kali disahkan.
    `SESSION_SECRET`, pelayan enggan bermula dengan sesi moderator.
 2. Tetapkan `DATABASE_URL` — storan fail JSON hanya untuk pembangunan.
 3. Ganti `NEXT_PUBLIC_KONTAK_EMEL` dengan peti masuk yang benar-benar dipantau.
-4. Token kongsi moderator adalah penyelesaian sementara. Gantikan
+   Tetapkan juga `NEXT_PUBLIC_SITE_URL` — pautan pengesahan digest dibina
+   daripadanya.
+4. Sambungkan penyedia e-mel sebenar dalam `src/lib/emel.ts`. Sehingga itu,
+   borang digest kekal tersembunyi (`EMEL_PENGHANTAR=log` hanya menulis ke log
+   pelayan dan sesuai untuk pembangunan sahaja).
+5. Token kongsi moderator adalah penyelesaian sementara. Gantikan
    `src/lib/moderator.ts` dengan Supabase Auth atau SSO organisasi anda apabila
    pasukan moderasi bertambah besar.
 

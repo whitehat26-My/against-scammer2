@@ -9,6 +9,7 @@ import type {
   TindakanModerator,
 } from './types';
 import type { ReportStatus } from '@/lib/status';
+import type { Langganan } from '@/lib/digest';
 
 export type PilihanSenarai = {
   status?: ReportStatus[];
@@ -37,6 +38,19 @@ export type TindakanInput = {
  *  - tiada laporan tersiar tanpa rekod moderator (siapa & bila);
  *  - bilangan sokongan tidak pernah menaik taraf status.
  */
+/**
+ * Storan langganan digest e-mel.
+ *
+ * `langgan` mesti idempoten dan tidak boleh mendedahkan sama ada sesuatu alamat
+ * sudah wujud — lihat `src/lib/digest.ts`.
+ */
+export interface DigestStore {
+  langgan(emel: string): Promise<Langganan>;
+  sahkanLangganan(token: string): Promise<boolean>;
+  berhentiLangganan(token: string): Promise<boolean>;
+  bilanganLangganan(): Promise<number>;
+}
+
 export interface LaporanStore {
   cipta(input: LaporanInput): Promise<Laporan>;
   dapatkan(id: string): Promise<Laporan | undefined>;
@@ -50,18 +64,20 @@ export interface LaporanStore {
   logModerator(had?: number): Promise<LogModerator[]>;
 }
 
-let cached: LaporanStore | undefined;
+export type Store = LaporanStore & DigestStore;
+
+let cached: Store | undefined;
 
 /**
  * Pilih pelaksanaan storan.
  * Tetapkan `DATABASE_URL` untuk menggunakan Postgres; jika tidak, storan fail
  * digunakan supaya modul ini boleh dijalankan tanpa perkhidmatan luar.
  */
-export async function getStore(): Promise<LaporanStore> {
+export async function getStore(): Promise<Store> {
   const sedia = cached;
   if (sedia) return sedia;
 
-  let store: LaporanStore;
+  let store: Store;
   if (process.env.DATABASE_URL) {
     const { PgStore } = await import('./pg-store');
     store = new PgStore(process.env.DATABASE_URL);
@@ -74,6 +90,6 @@ export async function getStore(): Promise<LaporanStore> {
 }
 
 /** Untuk ujian: paksa storan tertentu. */
-export function setStore(store: LaporanStore | undefined): void {
+export function setStore(store: Store | undefined): void {
   cached = store;
 }

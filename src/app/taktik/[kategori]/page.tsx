@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Callout, PlatformChips, RiskBadge } from '@/components/ui';
 import { getCategory, listCategorySlugs } from '@/lib/content';
+import { getArticleSummaries } from '@/lib/berita';
+import { artikelUntukKategori } from '@/lib/artikel';
 import { dict, getLang } from '@/lib/i18n';
 
 type Params = { params: Promise<{ kategori: string }> };
@@ -26,6 +28,9 @@ export default async function KategoriPage({ params }: Params) {
   const entry = getCategory(kategori, lang);
 
   if (!entry) notFound();
+
+  // Pautan silang menggunakan taksonomi yang sama seperti modul berita.
+  const berita = artikelUntukKategori(getArticleSummaries(lang), entry.slug);
 
   return (
     <article className="container page stack-xl">
@@ -88,6 +93,27 @@ export default async function KategoriPage({ params }: Params) {
               </div>
             ))}
           </div>
+        </section>
+      ) : null}
+
+      {berita.length > 0 ? (
+        <section className="stack" aria-labelledby="berita-berkaitan">
+          <div className="divider-title">
+            <h2 id="berita-berkaitan">{d.berita.beritaUntukKategori}</h2>
+          </div>
+          <ul className="senarai-ringkas">
+            {berita.map((a) => (
+              <li key={a.slug}>
+                <Link href={`/berita/${a.slug}`}>{a.tajuk}</Link>{' '}
+                <span className="muted small">
+                  · {d.berita.jenisLabel[a.jenis]} · {a.sumber_nama}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className="small">
+            <Link href="/berita">{d.berita.lihatSemua}</Link>
+          </p>
         </section>
       ) : null}
 

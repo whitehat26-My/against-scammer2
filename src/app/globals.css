@@ -292,6 +292,7 @@ blockquote { margin: 0; }
 
 .brand {
   display: inline-flex;
+  white-space: nowrap;
   align-items: center;
   gap: 0.55rem;
   font-weight: 700;
@@ -316,7 +317,7 @@ blockquote { margin: 0; }
 }
 .brand__teks { display: none; }
 .brand__pendek { display: inline; }
-@media (min-width: 56rem) {
+@media (min-width: 78rem) {
   .brand__teks { display: inline; }
   .brand__pendek { display: none; }
 }

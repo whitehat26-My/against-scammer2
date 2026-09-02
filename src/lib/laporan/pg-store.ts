@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import type { LaporanStore, PilihanSenarai, TindakanInput } from './store';
+import type { DigestStore, LaporanStore, PilihanSenarai, TindakanInput } from './store';
 import type {
   Bantahan,
   BantahanInput,
@@ -12,6 +12,7 @@ import type {
 } from './types';
 import { akhiranHash, awalanSah, hashNilai, normalkanNilai } from './nilai';
 import type { ReportStatus } from '@/lib/status';
+import { normalkanEmel, tokenSah, type Langganan } from '@/lib/digest';
 
 type BarisLaporan = {
   id: string;
@@ -75,7 +76,7 @@ const SYARAT_TERSIAR = `
  * Storan Postgres/Supabase mengikut `db/schema.sql`.
  * Aktif apabila `DATABASE_URL` ditetapkan.
  */
-export class PgStore implements LaporanStore {
+export class PgStore implements LaporanStore, DigestStore {
   private readonly pool: Pool;
 
   constructor(connectionString: string) {
@@ -318,5 +319,64 @@ export class PgStore implements LaporanStore {
       sebab: r.sebab,
       tarikh: r.tarikh.toISOString(),
     }));
+  }
+
+  // ---- Digest e-mel ----
+
+  async langgan(emel: string): Promise<Langganan> {
+    const alamat = normalkanEmel(emel);
+    const { rows } = await this.pool.query<{
+      id: string;
+      emel: string;
+      disahkan_pada: Date | null;
+      token_sah: string;
+      token_batal: string;
+      pdpa_persetujuan: boolean;
+      created_at: Date;
+    }>(
+      `insert into digest_subscriber (emel, pdpa_persetujuan)
+       values ($1, true)
+       on conflict (emel) do update
+         set token_sah = case
+               when digest_subscriber.disahkan_pada is null then gen_random_uuid()
+               else digest_subscriber.token_sah
+             end
+       returning *`,
+      [alamat],
+    );
+    const baris = rows[0] as NonNullable<(typeof rows)[number]>;
+    return {
+      id: baris.id,
+      emel: baris.emel,
+      disahkan_pada: iso(baris.disahkan_pada),
+      token_sah: baris.token_sah,
+      token_batal: baris.token_batal,
+      pdpa_persetujuan: baris.pdpa_persetujuan,
+      created_at: baris.created_at.toISOString(),
+    };
+  }
+
+  async sahkanLangganan(token: string): Promise<boolean> {
+    if (!tokenSah(token)) return false;
+    const { rowCount } = await this.pool.query(
+      `update digest_subscriber
+          set disahkan_pada = coalesce(disahkan_pada, now())
+        where token_sah = $1`,
+      [token],
+    );
+    return (rowCount ?? 0) > 0;
+  }
+
+  async berhentiLangganan(token: string): Promise<boolean> {
+    if (!tokenSah(token)) return false;
+    const { rowCount } = await this.pool.query('delete from digest_subscriber where token_batal = $1', [token]);
+    return (rowCount ?? 0) > 0;
+  }
+
+  async bilanganLangganan(): Promise<number> {
+    const { rows } = await this.pool.query<{ kiraan: string }>(
+      'select count(*)::text as kiraan from digest_subscriber where disahkan_pada is not null',
+    );
+    return Number(rows[0]?.kiraan ?? 0);
   }
 }

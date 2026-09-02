@@ -24,6 +24,7 @@ export const ms = {
     bantuan: 'Kalau dah kena',
     bantuanPendek: 'Bantuan',
     lapor: 'Lapor',
+    berita: 'Berita',
     tentang: 'Tentang',
     moderasi: 'Moderasi',
     menu: 'Menu',
@@ -329,6 +330,7 @@ export const ms = {
       { apa: 'E-mel pelapor (pilihan)', kenapa: 'Supaya moderator boleh menghubungi anda jika laporan perlu dijelaskan.', simpan: 'Bersama laporan berkenaan. Tidak pernah dipaparkan kepada orang awam.' },
       { apa: 'Imej bukti (pilihan)', kenapa: 'Untuk membantu moderator menilai laporan.', simpan: 'Akses terhad kepada moderator. Metadata imej dibuang sebelum penyimpanan.' },
       { apa: 'Butiran bantahan hak menjawab', kenapa: 'Untuk mengendalikan bantahan dan memaklumkan keputusan kepada anda.', simpan: 'Bersama rekod bantahan dan log audit berkaitan.' },
+      { apa: 'Alamat e-mel digest (opt-in)', kenapa: 'Untuk menghantar digest mingguan yang anda minta.', simpan: 'Sehingga anda berhenti melanggan. Berhenti membuang alamat anda sepenuhnya, bukan sekadar menandanya.' },
     ],
     fasaTitle: 'Apabila anda menghantar laporan komuniti',
     fasaLead:
@@ -377,12 +379,14 @@ export const ms = {
       'Alat semakan yang merujuk keluar ke Semak Mule',
       'Laporan komuniti dengan moderasi wajib sebelum penerbitan',
       'Papan pemuka moderasi dengan log audit',
+      'Suapan berita & amaran, ditag mengikut kategori ensiklopedia',
+      'Digest e-mel mingguan dengan pengesahan dua langkah',
       'Panduan langkah demi langkah “kalau dah kena scam”',
       'Notis privasi PDPA dan saluran hak menjawab',
     ],
     fasaSeterusnya: 'Fasa akan datang',
     fasaSeterusnyaItems: [
-      'Suapan berita automatik dan digest e-mel mingguan (opt-in)',
+      'Pengumpulan berita automatik daripada kenyataan media rasmi',
       'Akaun pengguna untuk menjejak status laporan sendiri',
       'Pengesahan moderator melalui SSO organisasi',
     ],
@@ -525,6 +529,64 @@ export const ms = {
     pelaporEmel: 'E-mel pelapor',
     tanpaNama: 'Tanpa nama',
     sokongan: 'Sokongan',
+  },
+  berita: {
+    title: 'Suapan berita & amaran',
+    lead:
+      'Ringkasan pendek tentang taktik semasa dan saluran rasmi, ditag mengikut kategori yang sama seperti ensiklopedia. Setiap entri memautkan balik ke sumber asalnya.',
+    cariPlaceholder: 'Cari tajuk atau sumber',
+    tapisTag: 'Tapis ikut kategori',
+    hasil: '{n} entri dipaparkan',
+    tiada: 'Tiada entri sepadan dengan tapisan anda.',
+    kosongkan: 'Kosongkan tapisan',
+    jenisLabel: {
+      berita: 'Berita',
+      amaran: 'Amaran',
+    },
+    jenisNota: {
+      berita: 'Ringkasan sesuatu yang diterbitkan di tempat lain. Baca sumber asal untuk butiran penuh.',
+      amaran: 'Nota amaran yang ditulis oleh pasukan portal ini, bukan laporan sesuatu peristiwa.',
+    },
+    sumberLabel: 'Sumber',
+    bacaSumber: 'Baca di sumber asal',
+    sumberNota:
+      'Kami meringkaskan dalam ayat kami sendiri dan tidak menyalin teks penuh. Untuk butiran rasmi, rujuk sumber asal.',
+    kembali: 'Kembali ke suapan berita',
+    tidakDijumpai: 'Entri ini tidak dijumpai.',
+    kategoriBerkaitan: 'Kategori berkaitan',
+    beritaUntukKategori: 'Berita & amaran berkaitan',
+    lihatSemua: 'Lihat suapan berita',
+  },
+  digest: {
+    title: 'Digest e-mel mingguan',
+    lead:
+      'Satu e-mel seminggu dengan entri baharu. Tiada iklan, tiada perkongsian alamat anda dengan pihak lain, dan anda boleh berhenti pada bila-bila masa.',
+    emel: 'Alamat e-mel anda',
+    emelBantuan: 'Kami hanya menggunakannya untuk menghantar digest ini.',
+    pdpa:
+      'Saya bersetuju alamat e-mel saya diproses untuk tujuan menghantar digest mingguan ini di bawah Akta Perlindungan Data Peribadi 2010.',
+    hantar: 'Langgan digest',
+    menghantar: 'Menghantar…',
+    jaya:
+      'Jika alamat itu boleh dilanggan, kami telah menghantar satu e-mel pengesahan. Langganan hanya aktif selepas anda klik pautan di dalamnya.',
+    nota:
+      'Kami tidak memberitahu sama ada alamat itu sudah berada dalam senarai — jawapan yang sama diberikan setiap kali supaya borang ini tidak boleh digunakan untuk menguji alamat orang lain.',
+    ralat: {
+      emel: 'Alamat e-mel itu tidak sah.',
+      pdpa: 'Persetujuan diperlukan sebelum anda boleh melanggan.',
+      kadar: 'Terlalu banyak percubaan dari peranti ini. Sila cuba lagi sebentar nanti.',
+      umum: 'Langganan tidak dapat diproses sekarang. Sila cuba lagi.',
+    },
+    sahkanTitle: 'Pengesahan langganan',
+    sahkanJaya: 'Langganan anda telah disahkan. Anda akan menerima digest mingguan yang seterusnya.',
+    sahkanGagal:
+      'Pautan pengesahan ini tidak sah atau telah digantikan oleh permintaan yang lebih baharu. Sila langgan semula.',
+    berhentiTitle: 'Berhenti melanggan',
+    berhentiJaya: 'Anda telah berhenti melanggan dan alamat e-mel anda telah dibuang daripada senarai kami.',
+    berhentiGagal: 'Pautan ini tidak sah, atau alamat itu telah pun dibuang.',
+    emelSubjek: 'Sahkan langganan digest Portal Semakan Scam',
+    emelTeks:
+      'Seseorang meminta digest mingguan Portal Semakan Scam dihantar ke alamat ini.\n\nJika ia anda, sahkan langganan di sini:\n{sahkan}\n\nJika bukan anda, abaikan e-mel ini — tiada apa-apa akan dihantar tanpa pengesahan.\n\nUntuk berhenti kemudian:\n{berhenti}',
   },
   footer: {
     tentang: 'Tentang portal',

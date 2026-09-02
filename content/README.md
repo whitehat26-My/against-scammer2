@@ -49,6 +49,36 @@ Ujian `tests/content.test.ts` menyemak semua peraturan di atas. Jalankan
 6. Apabila memautkan pautan scam sebagai contoh, tulis ia supaya tidak boleh
    diklik, contohnya `hxxps://contoh-tipu[.]xyz`.
 
+## Suapan berita (`content/berita/`)
+
+Struktur fail sama: `<slug>.ms.md` (wajib) dan `<slug>.en.md`.
+
+| Medan | Wajib | Keterangan |
+| --- | --- | --- |
+| `slug` | ya | Sama dengan nama fail. |
+| `tajuk` | ya | Tajuk entri. |
+| `ringkasan` | ya | Ringkasan dalam **ayat anda sendiri**, maksimum 1200 aksara. |
+| `jenis` | ya | `berita` untuk ringkasan sesuatu yang diterbitkan di tempat lain; `amaran` untuk nota evergreen yang ditulis oleh pasukan portal. |
+| `kategori_tags` | ya | Slug kategori ensiklopedia. Tag yang tiada dalam ensiklopedia akan gagal semasa binaan. |
+| `sumber_nama` | ya | Nama sumber, cth. "NSRC" atau "Bank Negara Malaysia". |
+| `sumber_url` | ya | URL penuh sumber asal. Mesti `https://`. |
+| `tarikh_terbit` | ya | Tarikh `YYYY-MM-DD`. Suapan disusun terkini dahulu. |
+
+Badan Markdown adalah konteks tambahan (pilihan) dalam ayat anda sendiri.
+
+### Peraturan suapan berita
+
+1. **Ringkaskan, jangan salin.** Jangan tampal perenggan penuh daripada
+   kenyataan media atau portal berita. Tulis semula, kemudian pautkan balik.
+2. **Setiap entri mesti ada sumber yang boleh disemak.** Tiada entri tanpa URL.
+3. **Jangan naikkan taraf `amaran` menjadi `berita`.** Kalau ia nota kita
+   sendiri, ia `amaran` — pembaca berhak tahu siapa yang berkata.
+4. **Jangan nyatakan angka atau dakwaan yang anda tidak boleh tunjukkan dalam
+   sumber.** Kalau sumber tidak menyebutnya, jangan tulis.
+5. Entri yang menyebut individu atau syarikat tertentu tertakluk kepada
+   peraturan bahasa yang sama seperti seluruh portal: "dilaporkan" dan
+   "disyaki", tidak pernah "disahkan".
+
 ## Menambah kategori baharu
 
 1. Salin fail sedia ada sebagai templat.
