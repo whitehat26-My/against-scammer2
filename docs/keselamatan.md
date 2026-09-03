@@ -129,7 +129,14 @@ Jalankan di **staging sahaja**, dengan data ujian, sebelum menambah Cloudflare.
 npm run check                 # typecheck + lint + 130+ ujian unit
 npm audit                     # pustaka dengan CVE diketahui
 DATABASE_URL=… npm test       # termasuk ujian integrasi Postgres
+BASE_URL=… node scripts/pentest.mjs   # suite pentest black-box (33 semakan HTTP)
 ```
+
+`scripts/pentest.mjs` menyerang binaan produksi di staging melalui HTTP sahaja:
+header/CSP/HSTS, injection pada endpoint julat, IDOR bukti, keselamatan sesi
+(pemalsuan, gangguan tandatangan, luput, token pra-sesi), path traversal, had
+kadar dan pengendalian kaedah HTTP. Ia keluar dengan kod bukan sifar jika mana-mana
+semakan gagal, jadi ia sesuai untuk CI.
 
 Ujian keselamatan khusus ada dalam `tests/keselamatan.test.ts`: enkripsi,
 TOTP (vektor rujukan RFC 6238), perangkap bot, protokol clamd, dan dasar
@@ -149,11 +156,54 @@ simpanan data.
 Proses: **dokumen setiap isu → patch → uji semula → ulang sehingga bersih.**
 Simpan catatan setiap pusingan; ia diperlukan jika berlaku insiden kemudian.
 
+### Keputusan pentest (pusingan 1 — 2026-09-03)
+
+Dijalankan terhadap binaan produksi (`npm run build && npm start`) di staging
+tempatan dengan data ujian sahaja — tiada data pengguna sebenar, dan sebelum
+sebarang WAF dipasang (mengikut turutan pengukuhan di bawah).
+
+**Liputan dan keputusan:**
+
+| Kategori | Serangan diuji | Keputusan |
+| --- | --- | --- |
+| Header/CSP | nosniff, DENY, no-referrer, HSTS, CSP nonce unik + `strict-dynamic`, tiada `unsafe-eval`, tiada `X-Powered-By` | ✅ semua hadir |
+| Injection (SQL) | muatan SQL melalui nama syarikat (disimpan verbatim) + endpoint julat; 9 muatan tak sah | ✅ 400 untuk input tak sah, tiada 500, jadual `report` utuh, aksara `'` di-escape ke `&#x27;` |
+| XSS tersimpan | `<script>`, `<img onerror>`, `<svg onload>` dalam nilai laporan & penerangan → diluluskan → dipapar awam | ✅ tiada pelaksanaan JS, tiada elemen DOM aktif dicipta, muatan dipapar sebagai teks di-escape |
+| Muat naik | EXE (`MZ`) bernama `.jpg`, fail 6 MB, PNG 1×1 sah | ✅ EXE ditolak (bait ajaib), >5 MB ditolak (saiz), PNG sah diterima |
+| IDOR / akses | `/api/bukti/*` tanpa sesi; `/moderasi` tanpa sesi; kuki palsu | ✅ 401 tanpa sesi, papan pemuka tidak bocor tanpa sesi |
+| Path traversal | `../../etc/passwd`, `%2e%2e`, null-byte pada nama bukti | ✅ tidak pernah 200, tiada kebocoran fail |
+| Sesi | token tandatangan salah, token luput, token pra-sesi sebagai sesi penuh | ✅ semua ditolak; kuki `HttpOnly` + `SameSite=Strict` + `Secure` |
+| Auth / MFA | log masuk id+token → langkah TOTP (RFC 6238); MFA tidak boleh dilangkau | ✅ log masuk perlu TOTP; moderasi hujung ke hujung berfungsi |
+| Bot | perangkap honeypot + ambang masa 3 saat | ✅ penghantaran bot ditolak |
+| Had kadar | 135 permintaan ke endpoint julat dari satu IP | ✅ 429 + `Retry-After` selepas had |
+| Kebergantungan | `npm audit` (prod dan dev) | ✅ 0 kerentanan |
+
+Jumlah: **33/33 semakan black-box lulus** (`scripts/pentest.mjs`),
+**17 serangan pelayar dineutralkan** (dipandu Playwright), **72 ujian unit
+keselamatan lulus**, **0 kerentanan `npm audit`**.
+
+**Isu ditemui dan tindakan:**
+
+- Tiada kerentanan aplikasi ditemui pada pusingan ini. Semua muatan berniat
+  jahat dineutralkan oleh lapisan sedia ada (escaping automatik React untuk
+  kandungan pengguna; `dangerouslySetInnerHTML` hanya untuk kandungan repo yang
+  dipercayai; pengesahan bait ajaib untuk muat naik; token sesi bertandatangan
+  HMAC; carian k-anonymity tanpa pepper rahsia jadi ia kekal boleh dikira di
+  pelayar).
+- Nota: bukti XSS disahkan dua kali — HTML mentah dari pelayan menunjukkan
+  muatan di-escape (`&lt;script&gt;`), dan pelayar mengesahkan `window.__xss*`
+  tidak pernah ditetapkan. Rentetan muatan hanya muncul di dalam data Flight
+  Next.js (`self.__next_f`) sebagai nilai rentetan bersiri — data, bukan skrip
+  boleh laksana.
+
+Pentest ini perlu diulang selepas setiap perubahan besar dan sebelum
+pelancaran awam (lihat nota pentest profesional di bawah).
+
 ### Turutan pengukuhan
 
 1. Bina ciri teras di staging. ✅ selesai
-2. Jalankan pentest sendiri mengikut senarai di atas → patch semua isu.
-3. Uji semula selepas patch.
+2. Jalankan pentest sendiri mengikut senarai di atas → patch semua isu. ✅ pusingan 1 selesai (2026-09-03), tiada isu ditemui
+3. Uji semula selepas patch. ✅ suite `scripts/pentest.mjs` boleh diulang bila-bila masa
 4. **Baru** tambah Cloudflare (WAF, perlindungan DDoS, had kadar edge) sebagai
    lapisan luaran sebelum pelancaran awam.
 

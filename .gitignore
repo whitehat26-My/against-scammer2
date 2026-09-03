@@ -16,3 +16,7 @@ npm-debug.log*
 # Buang dua baris ini jika pasukan anda mahu menjejakinya dalam git.
 AGENTS.md
 CLAUDE.md
+
+# Artefak pentest staging (jangan commit data/rahsia ujian)
+.data-pentest/
+.env.pentest
