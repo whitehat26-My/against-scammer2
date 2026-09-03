@@ -115,7 +115,7 @@ export function TaktikBrowser({ items, lang, d, common }: Props) {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="panel stack">
+        <div className="panel kilau stack">
           <p style={{ marginBottom: 0 }}>{d.tiadaHasil}</p>
           <div className="btnrow">
             <button type="button" className="btn btn--secondary" onClick={clearAll}>
@@ -126,7 +126,7 @@ export function TaktikBrowser({ items, lang, d, common }: Props) {
       ) : (
         <div className="grid grid--2">
           {filtered.map((c) => (
-            <Link key={c.slug} href={`/taktik/${c.slug}`} className="panel card--link">
+            <Link key={c.slug} href={`/taktik/${c.slug}`} className="panel kilau card--link">
               <div className="chips" style={{ marginBottom: '0.6rem' }}>
                 <span className={`badge badge--${c.risiko}`}>{RISK_LABEL[c.risiko][lang]}</span>
               </div>

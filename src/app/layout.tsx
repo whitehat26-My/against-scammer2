@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import './globals.css';
 import { SiteBottomNav, SiteFooter, SiteHeader } from '@/components/SiteChrome';
+import { KesanKaca } from '@/components/KesanKaca';
+import { LatarBelakang } from '@/components/LatarBelakang';
 import { dict, getLang, htmlLang } from '@/lib/i18n';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -30,6 +32,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang={htmlLang(lang)}>
       <body>
+        <LatarBelakang />
+        <KesanKaca />
         <a className="skip-link" href="#kandungan">
           {d.nav.skip}
         </a>

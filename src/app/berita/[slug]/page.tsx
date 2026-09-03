@@ -57,7 +57,7 @@ export default async function ArtikelPage({ params }: Params) {
 
       {artikel.html.trim() ? <section className="prose md" dangerouslySetInnerHTML={{ __html: artikel.html }} /> : null}
 
-      <section className="panel stack" aria-labelledby="sumber">
+      <section className="panel kilau stack" aria-labelledby="sumber">
         <h2 id="sumber">{d.berita.sumberLabel}</h2>
         <p className="muted" style={{ marginBottom: 0 }}>
           {d.berita.sumberNota}
@@ -79,7 +79,7 @@ export default async function ArtikelPage({ params }: Params) {
           </div>
           <div className="grid grid--2">
             {kategori.map((k) => (
-              <Link key={k.slug} href={`/taktik/${k.slug}`} className="panel card--link">
+              <Link key={k.slug} href={`/taktik/${k.slug}`} className="panel kilau card--link">
                 <h3 className="card__title">{k.nama}</h3>
                 <p className="small muted" style={{ marginBottom: 0 }}>
                   {k.ringkasan}

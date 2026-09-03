@@ -128,43 +128,54 @@ function SearchResult({
     [result],
   );
 
+  // Di halaman utama alat ini sudah berada dalam satu panel kaca, jadi hasilnya
+  // dipaparkan sebagai blok biasa supaya kaca tidak bersarang dalam kaca.
+  const blok = compact ? 'blok stack' : 'panel kilau stack';
+
   return (
     <div className="stack-lg">
-      <section className="panel stack">
-        <div className="divider-title">
-          <h2>{d.hasilTitle}</h2>
-        </div>
-        <p className="small muted" style={{ marginBottom: 0 }}>
-          {d.dikenalPastiSebagai}
-        </p>
-        <p style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 0 }}>
-          {d.kinds[result.kind]}
-          {result.normalized ? <span className="muted"> — {result.normalized}</span> : null}
-        </p>
-        {result.alternatives.length > 0 ? (
-          <p className="small muted" style={{ marginBottom: 0 }}>
-            {d.bolehJadiJuga}: {result.alternatives.map((a) => d.kinds[a]).join(', ')}
+      {/* Pengenalan input dan langkah rasmi digabungkan: ia satu jawapan, bukan dua. */}
+      <section className={blok}>
+        <div>
+          {/* Tajuk sebenar untuk struktur halaman, digayakan ringan supaya
+              ia tidak menambah berat visual pada hasil. */}
+          <h2 className="seksyen__eyebrow" style={{ marginBottom: '0.6rem' }}>
+            {d.hasilTitle}
+          </h2>
+          <p className="small muted" style={{ marginBottom: '0.15rem' }}>
+            {d.dikenalPastiSebagai}
           </p>
-        ) : null}
-      </section>
-
-      {/* Semakan rasmi sentiasa dipaparkan, untuk semua jenis input. */}
-      <section className="panel stack">
-        <h2>{d.rasmiTitle}</h2>
-        <p className="muted">{d.rasmiLead}</p>
-        <div className="btnrow">
-          <a className="btn btn--primary ext" href={SEMAK_MULE_URL} target="_blank" rel="noopener noreferrer">
-            {d.semakMuleCta}
-          </a>
-          <button type="button" className="btn btn--secondary" onClick={onReset}>
-            {d.reset}
-          </button>
+          <p style={{ fontSize: '1.15rem', fontWeight: 680, marginBottom: 0, overflowWrap: 'anywhere' }}>
+            {d.kinds[result.kind]}
+            {result.normalized ? <span className="muted"> — {result.normalized}</span> : null}
+          </p>
+          {result.alternatives.length > 0 ? (
+            <p className="small muted" style={{ margin: '0.35rem 0 0' }}>
+              {d.bolehJadiJuga}: {result.alternatives.map((a) => d.kinds[a]).join(', ')}
+            </p>
+          ) : null}
         </div>
-        <p className="small muted" style={{ marginBottom: 0 }}>
-          {d.semakMuleNota}
-        </p>
+
+        <hr className="pemisah" />
+
+        <div>
+          <h2 style={{ fontSize: '1.1rem' }}>{d.rasmiTitle}</h2>
+          <p className="muted small">{d.rasmiLead}</p>
+          <div className="btnrow">
+            <a className="btn btn--primary ext" href={SEMAK_MULE_URL} target="_blank" rel="noopener noreferrer">
+              {d.semakMuleCta}
+            </a>
+            <button type="button" className="btn btn--sunyi" onClick={onReset}>
+              {d.reset}
+            </button>
+          </div>
+          <p className="small muted" style={{ margin: '0.6rem 0 0' }}>
+            {d.semakMuleNota}
+          </p>
+        </div>
+
         {panduan.length > 0 ? (
-          <ul className="flaglist" style={{ marginTop: '0.5rem' }}>
+          <ul className="flaglist" style={{ marginTop: '0.25rem' }}>
             {panduan.map((item) => (
               <li key={item}>{item}</li>
             ))}
@@ -173,8 +184,8 @@ function SearchResult({
       </section>
 
       {result.kind === 'url' ? (
-        <section className="panel stack">
-          <h2>{d.hints.title}</h2>
+        <section className={blok}>
+          <h2 style={{ fontSize: '1.1rem' }}>{d.hints.title}</h2>
           <p className="muted small">{d.hints.lead}</p>
           {result.urlHints.length > 0 ? (
             <ul className="flaglist">
@@ -188,16 +199,16 @@ function SearchResult({
             </p>
           )}
           <div className="btnrow">
-            <Link className="btn btn--secondary" href={`/taktik/${SLUG_PAUTAN_PHISHING}`}>
-              {d.hints.pelajariCta}
+            <Link className="btn btn--sunyi" href={`/taktik/${SLUG_PAUTAN_PHISHING}`}>
+              {d.hints.pelajariCta} →
             </Link>
           </div>
         </section>
       ) : null}
 
       {!compact ? (
-        <section className="panel stack">
-          <h2>{d.komunitiTitle}</h2>
+        <section className="panel kilau stack">
+          <h2 style={{ fontSize: '1.1rem' }}>{d.komunitiTitle}</h2>
           {jenisLaporan.length > 0 ? (
             <LaporanKomuniti
               key={result.raw}
@@ -220,9 +231,9 @@ function SearchResult({
           </p>
         </section>
       ) : (
-        <p>
-          <Link className="btn btn--secondary" href="/semak">
-            {d.title}
+        <p style={{ marginBottom: 0 }}>
+          <Link className="btn btn--sunyi" href="/semak">
+            {d.title} →
           </Link>
         </p>
       )}

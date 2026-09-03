@@ -129,6 +129,39 @@ src/lib/
 tests/                Ujian unit + integrasi
 ```
 
+## Sistem reka bentuk
+
+Antara muka menggunakan permukaan kaca (*liquid glass*) di atas latar grid
+dengan satu jalur cahaya yang menyapu perlahan. Semuanya ada dalam
+`src/app/globals.css` dan dua komponen kecil.
+
+**Hierarki permukaan.** Hanya perkara yang boleh disentuh mendapat kaca:
+pengepala, navigasi bawah, borang, kad boleh klik, dan footer. Teks biasa
+duduk terus atas latar. Ini yang membezakan antara muka yang kemas dan
+antara muka yang penuh kotak — kalau semuanya kotak, tiada yang menonjol.
+
+**Kaca itu sendiri** dibina daripada empat lapisan pada setiap permukaan:
+`backdrop-filter` (kabur + tepu), tepi lensa (sempadan kecerunan yang lebih
+terang di atas dan gelap di bawah, melalui `mask-composite`), pantulan
+specular pada tepi atas, dan bayang berlapis. Elemen dengan kelas `kilau`
+turut mendapat sheen yang mengikut kursor — `KesanKaca` menetapkan `--sx`
+dan `--sy` melalui satu pendengar `pointermove` untuk seluruh halaman,
+didikit oleh `requestAnimationFrame`, dan hanya pada peranti penuding tepat.
+
+**Latar** (`LatarBelakang`) ialah grid halus yang ditapis supaya lenyap ke
+bawah, dengan satu jalur cahaya kabur yang menyapu setiap 30 saat. Jalur itu
+menganimasikan `transform` sahaja, jadi ia kekal pada thread komposit.
+
+**Sandaran.** Permukaan menjadi legap apabila `backdrop-filter` tidak
+disokong atau pengguna memilih `prefers-reduced-transparency`; sapuan
+berhenti pada `prefers-reduced-motion`; grid dan sapuan dimatikan sepenuhnya
+pada `prefers-contrast: more`. Kontras teks kecil disemak pada 4.5:1 dalam
+kedua-dua mod cerah dan gelap.
+
+Untuk menukar animasi latar kepada sesuatu yang lain, hanya `.latar__grid`,
+`.latar__sapu` dan keyframe `sapuan` perlu disentuh — tiada komponen lain
+bergantung padanya.
+
 ## Keputusan reka bentuk yang penting
 
 Keperluan undang-undang dalam brief dibina ke dalam seni bina, bukan ditampal

@@ -21,7 +21,7 @@ export function KadModerasi({
   tindakan: TindakanModerator[];
 }) {
   return (
-    <article className="panel stack">
+    <article className="panel kilau stack">
       <div className="chips">
         <span className="badge badge--neutral">{statusLabel(laporan.status, lang)}</span>
         <span className="chip">{dLapor.jenis[laporan.jenis_kenalan]}</span>

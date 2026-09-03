@@ -6,7 +6,7 @@ export function OfficialChannelList({ lang }: { lang: Lang }) {
   return (
     <div className="grid grid--2">
       {OFFICIAL_CHANNELS.map((channel) => (
-        <div key={channel.id} className="panel">
+        <div key={channel.id} className="panel kilau">
           <h3 className="card__title">{lang === 'ms' ? channel.nama : channel.name}</h3>
           <p className="small muted">{lang === 'ms' ? channel.keterangan_ms : channel.keterangan_en}</p>
           <div className="btnrow">

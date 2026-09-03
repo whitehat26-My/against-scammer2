@@ -32,7 +32,7 @@ export default async function TentangPage() {
           <h2 id="beza">{d.tentang.bezaTitle}</h2>
         </div>
         <div className="grid grid--2">
-          <div className="panel">
+          <div className="panel kilau">
             <h3 className="card__title">{d.tentang.bezaRasmiTitle}</h3>
             <ul style={{ marginBottom: 0 }}>
               {d.tentang.bezaRasmi.map((item) => (
@@ -40,7 +40,7 @@ export default async function TentangPage() {
               ))}
             </ul>
           </div>
-          <div className="panel">
+          <div className="panel kilau">
             <h3 className="card__title">{d.tentang.bezaKamiTitle}</h3>
             <ul style={{ marginBottom: 0 }}>
               {d.tentang.bezaKami.map((item) => (
@@ -56,7 +56,7 @@ export default async function TentangPage() {
           <h2 id="fasa">{d.tentang.fasaTitle}</h2>
         </div>
         <div className="grid grid--2">
-          <div className="panel">
+          <div className="panel kilau">
             <h3 className="card__title">{d.tentang.fasaSekarang}</h3>
             <ul style={{ marginBottom: 0 }}>
               {d.tentang.fasaSekarangItems.map((item) => (
@@ -64,7 +64,7 @@ export default async function TentangPage() {
               ))}
             </ul>
           </div>
-          <div className="panel">
+          <div className="panel kilau">
             <h3 className="card__title">{d.tentang.fasaSeterusnya}</h3>
             <ul style={{ marginBottom: 0 }}>
               {d.tentang.fasaSeterusnyaItems.map((item) => (
@@ -95,7 +95,7 @@ export default async function TentangPage() {
         </Callout>
       </section>
 
-      <section className="panel stack" aria-labelledby="sumbangan">
+      <section className="panel kilau stack" aria-labelledby="sumbangan">
         <h2 id="sumbangan">{d.tentang.sumbanganTitle}</h2>
         <p>{d.tentang.sumbanganLead}</p>
         <div className="btnrow">

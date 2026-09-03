@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SearchTool } from '@/components/SearchTool';
-import { Callout } from '@/components/ui';
 import { dict, getLang } from '@/lib/i18n';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,17 +21,20 @@ export default async function SemakPage() {
 
       <SearchTool d={d.semak} lang={lang} />
 
-      <Callout tone="amaran" title={d.home.hadTitle}>
-        <ul style={{ marginBottom: 0 }}>
+      <section className="jalur" aria-labelledby="had-semak">
+        <p className="seksyen__eyebrow">{d.home.hadEyebrow}</p>
+        <h2 id="had-semak" style={{ fontSize: '1.1rem' }}>
+          {d.home.hadTitle}
+        </h2>
+        <ul className="jalur__senarai">
           {d.home.hadItems.map((item) => (
             <li key={item}>{item}</li>
           ))}
         </ul>
-      </Callout>
-
-      <p className="small">
-        <Link href="/privasi">{d.semak.privasiPautan}</Link>
-      </p>
+        <p className="small" style={{ marginBottom: 0 }}>
+          <Link href="/privasi">{d.semak.privasiPautan}</Link>
+        </p>
+      </section>
     </div>
   );
 }

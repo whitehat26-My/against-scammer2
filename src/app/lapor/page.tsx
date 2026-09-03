@@ -36,7 +36,7 @@ export default async function LaporPage({
         </ul>
       </Callout>
 
-      <section className="panel">
+      <section className="panel kilau">
         <BorangLaporan
           d={d.lapor}
           kategori={kategori}

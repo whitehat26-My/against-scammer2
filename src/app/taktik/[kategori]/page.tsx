@@ -60,7 +60,7 @@ export default async function KategoriPage({ params }: Params) {
       </header>
 
       {entry.red_flags.length > 0 ? (
-        <section className="panel stack" aria-labelledby="red-flags">
+        <section className="panel kilau stack" aria-labelledby="red-flags">
           <h2 id="red-flags">{d.common.redFlags}</h2>
           <ul className="flaglist">
             {entry.red_flags.map((flag) => (
@@ -74,12 +74,8 @@ export default async function KategoriPage({ params }: Params) {
 
       {entry.contoh_taktik.length > 0 ? (
         <section className="stack" aria-labelledby="contoh">
-          <div className="divider-title">
-            <h2 id="contoh">{d.common.contohMesej}</h2>
-          </div>
-          <Callout tone="nota">
-            <p style={{ marginBottom: 0 }}>{d.common.contohAnonim}</p>
-          </Callout>
+          <h2 id="contoh">{d.common.contohMesej}</h2>
+          <p className="seksyen__lead small">{d.common.contohAnonim}</p>
           <div className="stack">
             {entry.contoh_taktik.map((contoh) => (
               <div key={contoh.tajuk} className="script">
@@ -98,9 +94,7 @@ export default async function KategoriPage({ params }: Params) {
 
       {berita.length > 0 ? (
         <section className="stack" aria-labelledby="berita-berkaitan">
-          <div className="divider-title">
-            <h2 id="berita-berkaitan">{d.berita.beritaUntukKategori}</h2>
-          </div>
+          <h2 id="berita-berkaitan">{d.berita.beritaUntukKategori}</h2>
           <ul className="senarai-ringkas">
             {berita.map((a) => (
               <li key={a.slug}>
@@ -117,8 +111,10 @@ export default async function KategoriPage({ params }: Params) {
         </section>
       ) : null}
 
-      <section className="panel stack" aria-labelledby="dah-kena">
-        <h2 id="dah-kena">{d.taktik.langkahPantasTitle}</h2>
+      <section className="panel kilau stack" aria-labelledby="dah-kena">
+        <h2 id="dah-kena" style={{ fontSize: '1.2rem' }}>
+          {d.taktik.langkahPantasTitle}
+        </h2>
         {entry.langkah_pantas.length > 0 ? (
           <ol>
             {entry.langkah_pantas.map((langkah) => (

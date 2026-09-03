@@ -28,7 +28,7 @@ export default async function BeritaPage() {
 
       {/* Borang digest hanya dipaparkan apabila penghantar e-mel dikonfigurasi. */}
       {digestAktif() ? (
-        <section className="panel stack" aria-labelledby="digest">
+        <section className="panel kilau stack" aria-labelledby="digest">
           <h2 id="digest">{d.digest.title}</h2>
           <p className="muted">{d.digest.lead}</p>
           <BorangDigest d={d.digest} />

@@ -23,7 +23,7 @@ export default async function PrivasiPage() {
         </p>
       </header>
 
-      <section className="panel stack" aria-labelledby="carian">
+      <section className="panel kilau stack" aria-labelledby="carian">
         <h2 id="carian">{d.privasi.carianTitle}</h2>
         <p>{d.privasi.carianLead}</p>
         <ul>
@@ -73,7 +73,7 @@ export default async function PrivasiPage() {
         </Callout>
       </section>
 
-      <section className="panel stack" aria-labelledby="hak">
+      <section className="panel kilau stack" aria-labelledby="hak">
         <h2 id="hak">{d.privasi.hakTitle}</h2>
         <p>{d.privasi.hakLead}</p>
         <div className="btnrow">

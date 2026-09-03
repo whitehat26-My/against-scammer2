@@ -19,7 +19,7 @@ export default async function TerimaKasihPage() {
         <p className="hero__lead">{d.lapor.jayaLead}</p>
       </header>
 
-      <section className="panel stack">
+      <section className="panel kilau stack">
         <ol className="steps">
           {d.lapor.jayaLangkah.map((langkah) => (
             <li key={langkah}>

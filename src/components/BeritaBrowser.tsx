@@ -82,7 +82,7 @@ export function BeritaBrowser({
       </div>
 
       {hasil.length === 0 ? (
-        <div className="panel stack">
+        <div className="panel kilau stack">
           <p style={{ marginBottom: 0 }}>{d.tiada}</p>
           <div className="btnrow">
             <button type="button" className="btn btn--secondary" onClick={kosongkan}>
@@ -93,7 +93,7 @@ export function BeritaBrowser({
       ) : (
         <div className="grid grid--2">
           {hasil.map((a) => (
-            <Link key={a.slug} href={`/berita/${a.slug}`} className="panel card--link">
+            <Link key={a.slug} href={`/berita/${a.slug}`} className="panel kilau card--link">
               <div className="chips" style={{ marginBottom: '0.6rem' }}>
                 <span className={a.jenis === 'berita' ? 'badge badge--sederhana' : 'badge badge--tinggi'}>
                   {d.jenisLabel[a.jenis]}

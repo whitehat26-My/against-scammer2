@@ -62,7 +62,7 @@ export default async function HakMenjawabPage() {
         <p>{d.hakMenjawab.pdpaLead}</p>
       </section>
 
-      <section className="panel stack" aria-labelledby="kontak">
+      <section className="panel kilau stack" aria-labelledby="kontak">
         <h2 id="kontak">{d.hakMenjawab.kontakTitle}</h2>
         <div className="btnrow">
           <a className="btn btn--primary" href={`mailto:${KONTAK_EMEL}`}>

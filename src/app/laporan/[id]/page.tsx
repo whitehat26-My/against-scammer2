@@ -55,7 +55,7 @@ export default async function LaporanPage({ params }: { params: Promise<{ id: st
         <p style={{ marginBottom: 0 }}>{d.laporanAwam.penafian}</p>
       </Callout>
 
-      <section className="panel stack">
+      <section className="panel kilau stack">
         <h2>{d.laporanAwam.peneranganLabel}</h2>
         <p style={{ whiteSpace: 'pre-wrap', marginBottom: 0 }}>{laporan.penerangan}</p>
         {kategori ? (
@@ -66,7 +66,7 @@ export default async function LaporanPage({ params }: { params: Promise<{ id: st
       </section>
 
       {bantahan.length > 0 ? (
-        <section className="panel stack">
+        <section className="panel kilau stack">
           <h2>{d.laporanAwam.bantahSedia}</h2>
           {bantahan.map((b) => (
             <blockquote key={b.id} className="petikan">
@@ -79,7 +79,7 @@ export default async function LaporanPage({ params }: { params: Promise<{ id: st
         </section>
       ) : null}
 
-      <section className="panel stack">
+      <section className="panel kilau stack">
         <h2>{d.semak.rasmiTitle}</h2>
         <p className="muted">{d.semak.rasmiLead}</p>
         <div className="btnrow">
@@ -92,7 +92,7 @@ export default async function LaporanPage({ params }: { params: Promise<{ id: st
         </div>
       </section>
 
-      <section className="panel stack">
+      <section className="panel kilau stack">
         <h2>{d.laporanAwam.sokongTitle}</h2>
         <p className="muted">{d.laporanAwam.sokongLead}</p>
         <form action={sokongLaporan}>
@@ -103,7 +103,7 @@ export default async function LaporanPage({ params }: { params: Promise<{ id: st
         </form>
       </section>
 
-      <section className="panel stack">
+      <section className="panel kilau stack">
         <h2>{d.laporanAwam.bantahTitle}</h2>
         <p className="muted">{d.laporanAwam.bantahLead}</p>
         <BorangBantahan laporanId={laporan.id} d={d.laporanAwam} ralatTeks={d.lapor.ralat} />

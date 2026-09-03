@@ -33,7 +33,7 @@ export default async function StatusLaporanPage() {
         </div>
         <div className="grid grid--3">
           {REPORT_STATUSES.map((status) => (
-            <div key={status} className="panel">
+            <div key={status} className="panel kilau">
               <p className="chips" style={{ marginBottom: '0.6rem' }}>
                 <span
                   className={

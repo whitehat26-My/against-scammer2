@@ -35,7 +35,7 @@ export default async function ModerasiPage() {
                 <p style={{ marginBottom: 0 }}>{d.moderasi.masukLalai}</p>
               </Callout>
             ) : null}
-            <section className="panel">
+            <section className="panel kilau">
               <BorangMasuk d={d.moderasi} />
             </section>
           </>
