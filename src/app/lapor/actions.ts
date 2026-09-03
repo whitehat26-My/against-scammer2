@@ -7,6 +7,7 @@ import { MAKS_FAIL, simpanBukti } from '@/lib/laporan/bukti';
 import { getStore } from '@/lib/laporan/store';
 import { nilaiMentah, sahkanBorangLaporan, type KodRalat, type Medan, type NilaiMentah } from '@/lib/laporan/validasi';
 import { hadKadar } from '@/lib/rate-limit';
+import { ipKlien } from '@/lib/ip';
 import { captchaWajib, captchaDikonfigurasi, perangkapDilanggar, sahkanCaptcha } from '@/lib/captcha';
 
 export type RalatUmum =
@@ -35,8 +36,7 @@ export type KeadaanBorang = {
 
 /** Pengenal kasar untuk had kadar sahaja. Ia tidak pernah disimpan — lihat src/lib/rate-limit.ts. */
 async function pengenalPermintaan(): Promise<string> {
-  const h = await headers();
-  return h.get('x-forwarded-for')?.split(',')[0]?.trim() || h.get('x-real-ip') || 'tempatan';
+  return ipKlien(await headers());
 }
 
 export async function hantarLaporan(_sebelum: KeadaanBorang, data: FormData): Promise<KeadaanBorang> {

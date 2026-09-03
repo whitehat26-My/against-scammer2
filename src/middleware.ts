@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { ipKlien } from '@/lib/ip';
 
 /**
  * Lapisan perimeter: HTTPS wajib, dasar keselamatan kandungan, dan sekatan IP
@@ -18,12 +19,6 @@ function senaraiIpDibenarkan(): string[] {
     .split(',')
     .map((ip) => ip.trim())
     .filter(Boolean);
-}
-
-function ipPermintaan(request: NextRequest): string {
-  const teruskan = request.headers.get('x-forwarded-for');
-  if (teruskan) return teruskan.split(',')[0]?.trim() ?? '';
-  return request.headers.get('x-real-ip')?.trim() ?? '';
 }
 
 function dasarKandungan(nonce: string): string {
@@ -66,7 +61,7 @@ export function middleware(request: NextRequest): NextResponse {
   // 2. Senarai putih IP untuk panel moderasi, jika dikonfigurasi.
   const dibenarkan = senaraiIpDibenarkan();
   const laluanAdmin = LALUAN_ADMIN.some((l) => request.nextUrl.pathname.startsWith(l));
-  if (dibenarkan.length > 0 && laluanAdmin && !dibenarkan.includes(ipPermintaan(request))) {
+  if (dibenarkan.length > 0 && laluanAdmin && !dibenarkan.includes(ipKlien(request.headers))) {
     return new NextResponse('Tidak dibenarkan.', { status: 403, headers: { 'content-type': 'text/plain; charset=utf-8' } });
   }
 

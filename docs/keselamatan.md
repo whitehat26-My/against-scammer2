@@ -106,7 +106,8 @@ CAPTCHA_KUNCI_TAPAK=…
 CAPTCHA_KUNCI_RAHSIA=…
 
 # Pilihan
-MODERATOR_IP_DIBENARKAN=203.0.113.5,203.0.113.6
+MODERATOR_IP_DIBENARKAN=203.0.113.5,203.0.113.6   # MASA BINAAN (edge middleware)
+DI_BELAKANG_CLOUDFLARE=1             # MASA BINAAN; percaya CF-Connecting-IP
 MODERATOR_EMEL_AMARAN=keselamatan@…
 IMBASAN_MALWARE=clamav
 CLAMD_HOS=127.0.0.1
@@ -116,6 +117,13 @@ EMEL_PENGHANTAR=…                    # digest & amaran peranti baharu
 PAKSA_HTTPS=0                        # hanya jika proksi hadapan sudah mengalihkan
 CAPTCHA_TIDAK_DIPERLUKAN=1           # keputusan disengajakan; amaran dipaparkan
 ```
+
+> **Masa binaan vs runtime.** `MODERATOR_IP_DIBENARKAN` dan
+> `DI_BELAKANG_CLOUDFLARE` digunakan dalam `src/middleware.ts` (runtime edge),
+> yang tidak membaca env runtime sewenang-wenangnya. Kedua-duanya disalin masa
+> binaan melalui `env` dalam `next.config.ts`, jadi **tetapkannya semasa
+> `next build`**. Senarai putih IP utama yang boleh diubah semasa runtime ialah
+> WAF Cloudflare — lihat [`cloudflare-waf.md`](cloudflare-waf.md).
 
 ---
 
@@ -205,7 +213,9 @@ pelancaran awam (lihat nota pentest profesional di bawah).
 2. Jalankan pentest sendiri mengikut senarai di atas → patch semua isu. ✅ pusingan 1 selesai (2026-09-03), tiada isu ditemui
 3. Uji semula selepas patch. ✅ suite `scripts/pentest.mjs` boleh diulang bila-bila masa
 4. **Baru** tambah Cloudflare (WAF, perlindungan DDoS, had kadar edge) sebagai
-   lapisan luaran sebelum pelancaran awam.
+   lapisan luaran sebelum pelancaran awam. ✅ config sebagai kod disediakan —
+   [`cloudflare-waf.md`](cloudflare-waf.md) + [`../infra/cloudflare/`](../infra/cloudflare/)
+   (untuk di-apply pada akaun/domain sebenar).
 
 Turutan ini penting: WAF yang dipasang sebelum ujian akan menyembunyikan isu
 sebenar dalam logik aplikasi, bukan membetulkannya.

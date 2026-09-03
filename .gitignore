@@ -20,3 +20,12 @@ CLAUDE.md
 # Artefak pentest staging (jangan commit data/rahsia ujian)
 .data-pentest/
 .env.pentest
+
+# Terraform (Cloudflare)
+infra/cloudflare/.terraform/
+infra/cloudflare/.terraform.lock.hcl
+infra/cloudflare/*.tfstate
+infra/cloudflare/*.tfstate.*
+infra/cloudflare/terraform.tfvars
+infra/cloudflare/*.tfvars
+!infra/cloudflare/terraform.tfvars.example

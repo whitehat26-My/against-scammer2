@@ -20,6 +20,7 @@ import {
   totpDiperlukan,
 } from '@/lib/moderator';
 import { hadKadar } from '@/lib/rate-limit';
+import { ipKlien } from '@/lib/ip';
 
 export type KeadaanMasuk = {
   gagal?: boolean;
@@ -36,8 +37,7 @@ type Konteks = { ip: string; ejen: string };
 
 async function konteksPermintaan(): Promise<Konteks> {
   const h = await headers();
-  const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim() || h.get('x-real-ip')?.trim() || 'tempatan';
-  return { ip, ejen: h.get('user-agent') ?? 'tidak diketahui' };
+  return { ip: ipKlien(h), ejen: h.get('user-agent') ?? 'tidak diketahui' };
 }
 
 export async function logMasuk(_sebelum: KeadaanMasuk, data: FormData): Promise<KeadaanMasuk> {

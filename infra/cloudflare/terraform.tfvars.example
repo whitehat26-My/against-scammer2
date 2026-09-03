@@ -1,0 +1,18 @@
+# Salin ke terraform.tfvars dan isi. JANGAN commit terraform.tfvars.
+# Token API ditetapkan melalui persekitaran, bukan di sini:
+#   export CLOUDFLARE_API_TOKEN=xxxxxxxx
+
+zone_id   = "letak_zone_id_anda"
+zone_name = "semakscam.my"
+
+# Kosongkan untuk mematikan sekatan IP pinggir bagi panel admin.
+# admin_ip_allowlist = ["203.0.113.10", "198.51.100.0/24"]
+admin_ip_allowlist = []
+
+# low | medium | high — mula dengan medium.
+owasp_paranoia_level = "medium"
+
+# Had kadar pinggir (setiap IP seminit).
+rate_limit_julat_per_minit = 60
+rate_limit_lapor_per_minit = 10
+rate_limit_masuk_per_minit = 8
