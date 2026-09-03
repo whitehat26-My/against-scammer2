@@ -5,16 +5,21 @@ import path from 'node:path';
 import { akhiranHash, awalanHash, awalanSah, hashNilai, normalkanNilai, PANJANG_AWALAN } from '@/lib/laporan/nilai';
 import { bolehTersiar, dalamGiliran } from '@/lib/laporan/types';
 import { sahkanBorangBantahan, sahkanBorangLaporan } from '@/lib/laporan/validasi';
+import { lupakanKunci } from '@/lib/kripto';
 
 let dir: string;
 
 beforeEach(async () => {
   dir = await fs.mkdtemp(path.join(os.tmpdir(), 'laporan-'));
   process.env.DATA_DIR = dir;
+  process.env.DATA_ENCRYPTION_KEY = 'c'.repeat(64);
+  lupakanKunci();
 });
 
 afterEach(async () => {
   delete process.env.DATA_DIR;
+  delete process.env.DATA_ENCRYPTION_KEY;
+  lupakanKunci();
   await fs.rm(dir, { recursive: true, force: true });
 });
 
@@ -192,6 +197,87 @@ describe('kitaran hayat laporan', () => {
     expect(log[0]?.tindakan).toBe('buang');
     expect(log[1]?.moderator_id).toBe('aisyah');
     expect(log.every((l) => l.tarikh && l.laporan_id === laporan.id)).toBe(true);
+  });
+});
+
+describe('data peribadi disulitkan semasa simpan', () => {
+  it('e-mel pelapor tidak muncul dalam bentuk jelas pada cakera', async () => {
+    const store = await storBaharu();
+    await store.cipta(INPUT);
+
+    const mentah = await fs.readFile(path.join(dir, 'laporan.json'), 'utf8');
+    expect(mentah).not.toContain('pelapor@contoh.my');
+    expect(mentah).toContain('enc:v1:');
+  });
+
+  it('mengembalikan e-mel dalam bentuk jelas kepada moderator', async () => {
+    const store = await storBaharu();
+    const laporan = await store.cipta(INPUT);
+    expect((await store.dapatkan(laporan.id))?.pelapor_emel).toBe('pelapor@contoh.my');
+    expect((await store.senarai({ giliran: true }))[0]?.pelapor_emel).toBe('pelapor@contoh.my');
+  });
+
+  it('e-mel pembantah disulitkan tetapi boleh dibaca semula', async () => {
+    const store = await storBaharu();
+    const laporan = await store.cipta(INPUT);
+    await store.tindakanModerator({ laporan_id: laporan.id, tindakan: 'terima', moderator_id: 'a', sebab: null });
+    await store.ciptaBantahan({
+      laporan_id: laporan.id,
+      pembantah_nama: 'Nurul',
+      pembantah_emel: 'nurul@contoh.my',
+      hujah: 'Nombor ini milik kedai saya dan telah dipalsukan oleh pihak ketiga.',
+      pdpa_persetujuan: true,
+    });
+
+    const mentah = await fs.readFile(path.join(dir, 'laporan.json'), 'utf8');
+    expect(mentah).not.toContain('nurul@contoh.my');
+    expect((await store.bantahanUntuk(laporan.id))[0]?.pembantah_emel).toBe('nurul@contoh.my');
+  });
+
+  it('alamat digest disimpan bersulit dengan indeks buta untuk carian', async () => {
+    const store = await storBaharu();
+    await store.langgan('pembaca@contoh.my');
+    const mentah = await fs.readFile(path.join(dir, 'laporan.json'), 'utf8');
+    expect(mentah).not.toContain('pembaca@contoh.my');
+    // Langganan berulang tetap menjumpai rekod yang sama melalui indeks buta.
+    const kedua = await store.langgan('Pembaca@Contoh.MY');
+    expect(kedua.emel).toBe('pembaca@contoh.my');
+  });
+
+  it('padam data peribadi mengekalkan amaran tetapi membuang pengenalan', async () => {
+    const store = await storBaharu();
+    const laporan = await store.cipta({ ...INPUT, bukti: ['fail.jpg'] });
+    await store.padamDataPeribadi(laporan.id);
+
+    const selepas = await store.dapatkan(laporan.id);
+    expect(selepas?.pelapor_emel).toBeNull();
+    expect(selepas?.bukti).toEqual([]);
+    expect(selepas?.penerangan).toBe(INPUT.penerangan);
+  });
+
+  it('padam laporan membuang laporan dan bantahannya', async () => {
+    const store = await storBaharu();
+    const laporan = await store.cipta(INPUT);
+    await store.padamLaporan(laporan.id);
+    expect(await store.dapatkan(laporan.id)).toBeUndefined();
+    expect(await store.bantahanUntuk(laporan.id)).toEqual([]);
+  });
+
+  it('log audit merekod peristiwa keselamatan admin dengan IP', async () => {
+    const store = await storBaharu();
+    await store.catatPeristiwaAdmin({ moderator_id: 'aisyah', tindakan: 'log_masuk', sebab: null, ip: '203.0.113.9' });
+    const log = await store.logModerator();
+    expect(log[0]?.tindakan).toBe('log_masuk');
+    expect(log[0]?.ip).toBe('203.0.113.9');
+    expect(log[0]?.laporan_id).toBeNull();
+  });
+
+  it('mengenali peranti yang pernah digunakan', async () => {
+    const store = await storBaharu();
+    expect(await store.perantiDikenali('aisyah', 'a'.repeat(32))).toBe(false);
+    await store.daftarPeranti('aisyah', 'a'.repeat(32));
+    expect(await store.perantiDikenali('aisyah', 'a'.repeat(32))).toBe(true);
+    expect(await store.perantiDikenali('farid', 'a'.repeat(32))).toBe(false);
   });
 });
 

@@ -32,9 +32,43 @@ describe.skipIf(!URL_DB)('storan Postgres', () => {
     store = new PgStore(URL_DB as string);
   });
 
+  it('menyimpan kontak pelapor dalam bentuk bersulit', async () => {
+    const laporan = await store.cipta({ ...input, pelapor_emel: 'pelapor@contoh.my' });
+
+    const { Pool } = await import('pg');
+    const pool = new Pool({ connectionString: URL_DB });
+    const { rows } = await pool.query<{ pelapor_emel: string }>('select pelapor_emel from report where id = $1', [laporan.id]);
+    await pool.end();
+
+    expect(rows[0]?.pelapor_emel).not.toContain('pelapor@contoh.my');
+    expect(rows[0]?.pelapor_emel?.startsWith('enc:v1:')).toBe(true);
+    expect((await store.dapatkan(laporan.id))?.pelapor_emel).toBe('pelapor@contoh.my');
+  });
+
+  it('merekod peristiwa admin dengan IP dan menjejaki peranti', async () => {
+    await store.catatPeristiwaAdmin({ moderator_id: 'aisyah', tindakan: 'log_masuk', sebab: null, ip: '203.0.113.9' });
+    const log = await store.logModerator(5);
+    expect(log[0]?.tindakan).toBe('log_masuk');
+    expect(log[0]?.ip).toBe('203.0.113.9');
+
+    expect(await store.perantiDikenali('aisyah', 'e'.repeat(32))).toBe(false);
+    await store.daftarPeranti('aisyah', 'e'.repeat(32));
+    expect(await store.perantiDikenali('aisyah', 'e'.repeat(32))).toBe(true);
+  });
+
+  it('padam data peribadi mengekalkan laporan sebagai amaran', async () => {
+    const laporan = await store.cipta({ ...input, pelapor_emel: 'pelapor@contoh.my', bukti: ['fail.jpg'] });
+    await store.padamDataPeribadi(laporan.id);
+    const selepas = await store.dapatkan(laporan.id);
+    expect(selepas?.pelapor_emel).toBeNull();
+    expect(selepas?.bukti).toEqual([]);
+    expect(selepas?.penerangan).toBe(input.penerangan);
+  });
+
   afterAll(async () => {
     const { Pool } = await import('pg');
     const pool = new Pool({ connectionString: URL_DB });
+    await pool.query('delete from admin_device');
     await pool.query('delete from moderator_log');
     await pool.query('delete from dispute');
     await pool.query('delete from report');

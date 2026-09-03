@@ -4,6 +4,7 @@ import { BorangLaporan } from '@/components/BorangLaporan';
 import { Callout } from '@/components/ui';
 import { getCategorySummaries } from '@/lib/content';
 import { isJenisKenalan } from '@/lib/laporan/types';
+import { captchaDikonfigurasi, captchaWajib, kunciTapakCaptcha, penyediaCaptcha } from '@/lib/captcha';
 import { dict, getLang } from '@/lib/i18n';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,6 +22,12 @@ export default async function LaporPage({
   const { jenis } = await searchParams;
   const kategori = getCategorySummaries(lang).map((k) => ({ slug: k.slug, nama: k.nama }));
 
+  const penyedia = penyediaCaptcha();
+  const kunciTapak = kunciTapakCaptcha();
+  const captcha = penyedia && kunciTapak ? { penyedia, kunciTapak } : undefined;
+  // Gagal-tutup: dalam produksi tanpa CAPTCHA, borang tidak dipaparkan langsung.
+  const borangDitutup = captchaWajib() && !captchaDikonfigurasi();
+
   return (
     <div className="container page stack-lg">
       <header className="hero">
@@ -37,11 +44,18 @@ export default async function LaporPage({
       </Callout>
 
       <section className="panel kilau">
-        <BorangLaporan
-          d={d.lapor}
-          kategori={kategori}
-          jenisAwal={isJenisKenalan(jenis) ? jenis : undefined}
-        />
+        {borangDitutup ? (
+          <div className="notis notis--bahaya">
+            <p style={{ marginBottom: 0 }}>{d.lapor.ralat.captcha_belum_sedia}</p>
+          </div>
+        ) : (
+          <BorangLaporan
+            d={d.lapor}
+            kategori={kategori}
+            jenisAwal={isJenisKenalan(jenis) ? jenis : undefined}
+            captcha={captcha}
+          />
+        )}
       </section>
 
       <p className="small muted">

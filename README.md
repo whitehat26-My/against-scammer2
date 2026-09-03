@@ -80,7 +80,16 @@ Semuanya ada nilai lalai untuk pembangunan. Tetapkan sebelum pelancaran sebenar:
 | `DATA_DIR` | Lokasi storan fail dan bukti imej. Lalai `.data/`. |
 | `MODERATOR_AKAUN` | Akaun moderator, format `id:token,id2:token2`. **Wajib dalam produksi** — tanpanya papan pemuka menolak semua log masuk. |
 | `SESSION_SECRET` | Rahsia HMAC untuk cookie sesi moderator. **Wajib dalam produksi.** |
-| `EMEL_PENGHANTAR` | Penghantar e-mel untuk digest. `log` menulis e-mel ke log pelayan (pembangunan). Tanpa nilai, borang digest tidak dipaparkan langsung. |
+| `EMEL_PENGHANTAR` | Penghantar e-mel untuk digest dan amaran peranti baharu. `log` menulis e-mel ke log pelayan (pembangunan). Tanpa nilai, borang digest tidak dipaparkan langsung. |
+| `DATA_ENCRYPTION_KEY` | Kunci AES-256 (64 aksara hex) untuk menyulitkan kontak pelapor dan bukti. **Wajib dalam produksi.** |
+| `MODERATOR_TOTP` | Rahsia TOTP setiap moderator, format `id:rahsia-base32,...`. Kod dua faktor diwajibkan untuk akaun yang mempunyainya. |
+| `CAPTCHA_PENYEDIA` | `turnstile` atau `hcaptcha`, dengan `CAPTCHA_KUNCI_TAPAK` dan `CAPTCHA_KUNCI_RAHSIA`. Borang laporan ditutup dalam produksi tanpanya. |
+| `MODERATOR_IP_DIBENARKAN` | Senarai IP yang boleh mencapai `/moderasi` dan `/api/bukti` (pilihan). |
+| `IMBASAN_MALWARE` | `clamav` untuk mengimbas bukti melalui clamd (`CLAMD_HOS`, `CLAMD_PORT`). |
+| `PAKSA_HTTPS` | `0` untuk mematikan pengalihan HTTPS jika proksi hadapan sudah mengendalikannya. |
+
+Senarai penuh, dasar setiap kawalan, dan senarai semak pentest ada dalam
+[`docs/keselamatan.md`](docs/keselamatan.md).
 
 Untuk menjalankan dengan Postgres:
 
@@ -269,9 +278,14 @@ secara berkala. Kemas kini `DISEMAK_PADA` setiap kali disahkan.
 
 ## Sebelum pelancaran
 
-1. Tetapkan `MODERATOR_AKAUN` dan `SESSION_SECRET`. Tanpa `MODERATOR_AKAUN`,
-   papan pemuka moderasi menolak semua log masuk dalam produksi; tanpa
-   `SESSION_SECRET`, pelayan enggan bermula dengan sesi moderator.
+Rujuk [`docs/keselamatan.md`](docs/keselamatan.md) untuk senarai penuh dan
+turutan pengukuhan (bina → pentest → patch → uji semula → baru pasang WAF).
+
+1. Tetapkan `MODERATOR_AKAUN`, `MODERATOR_TOTP`, `SESSION_SECRET` dan
+   `DATA_ENCRYPTION_KEY`. Tanpa `MODERATOR_AKAUN`, papan pemuka moderasi
+   menolak semua log masuk dalam produksi; tanpa `SESSION_SECRET` atau
+   `DATA_ENCRYPTION_KEY`, pelayan enggan mengendalikan sesi atau menyimpan
+   data peribadi.
 2. Tetapkan `DATABASE_URL` — storan fail JSON hanya untuk pembangunan.
 3. Ganti `NEXT_PUBLIC_KONTAK_EMEL` dengan peti masuk yang benar-benar dipantau.
    Tetapkan juga `NEXT_PUBLIC_SITE_URL` — pautan pengesahan digest dibina

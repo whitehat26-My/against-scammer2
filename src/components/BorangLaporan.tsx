@@ -1,10 +1,11 @@
 'use client';
 
-import { useActionState, useId } from 'react';
+import { useActionState, useId, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { hantarLaporan, type KeadaanBorang } from '@/app/lapor/actions';
 import { JENIS_KENALAN, type JenisKenalan } from '@/lib/laporan/types';
 import { MAKS_FAIL } from '@/lib/laporan/bukti.client';
+import { WidgetCaptcha } from './WidgetCaptcha';
 import type { Dictionary } from '@/lib/i18n';
 
 type Kategori = { slug: string; nama: string };
@@ -31,10 +32,12 @@ export function BorangLaporan({
   d,
   kategori,
   jenisAwal,
+  captcha,
 }: {
   d: Dictionary['lapor'];
   kategori: Kategori[];
   jenisAwal?: JenisKenalan;
+  captcha?: { penyedia: 'turnstile' | 'hcaptcha'; kunciTapak: string };
 }) {
   const [keadaan, tindakan] = useActionState<KeadaanBorang, FormData>(hantarLaporan, {});
   const id = useId();
@@ -46,6 +49,8 @@ export function BorangLaporan({
   // setiap jawapan tindakan.
   const semula = keadaan.semula;
   const cap = keadaan.cap ?? 'awal';
+  // Cap masa muat borang: penghantaran yang terlalu pantas hampir pasti bot.
+  const [dimuatPada] = useState(() => Date.now());
 
   const ralat = (medan: keyof NonNullable<KeadaanBorang['ralat']>) => {
     const kod = keadaan.ralat?.[medan];
@@ -180,6 +185,20 @@ export function BorangLaporan({
         </p>
         <MedanRalat teks={ralat('pelapor_emel')} htmlFor={`${id}-emel`} />
       </div>
+
+      {captcha ? (
+        <WidgetCaptcha penyedia={captcha.penyedia} kunciTapak={captcha.kunciTapak} label={d.captchaLabel} />
+      ) : null}
+
+      {/*
+        Medan umpan: disembunyikan daripada manusia dan pembaca skrin, tetapi
+        bot yang mengisi setiap medan akan mengisinya juga.
+      */}
+      <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px' }}>
+        <label htmlFor={`${id}-laman`}>Jangan isi medan ini</label>
+        <input id={`${id}-laman`} name="laman_web" type="text" tabIndex={-1} autoComplete="off" defaultValue="" />
+      </div>
+      <input type="hidden" name="dimuat_pada" value={dimuatPada} />
 
       <div className="field field--semak">
         <label className="semak-label">

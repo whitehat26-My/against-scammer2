@@ -1,5 +1,6 @@
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
+import { sahkanTotp } from './totp';
 
 /**
  * Pengesahan moderator.
@@ -16,7 +17,15 @@ import { cookies } from 'next/headers';
  */
 
 export const COOKIE_SESI = 'moderasi';
-const TEMPOH_SESI_SAAT = 60 * 60 * 8;
+/**
+ * Sesi tamat selepas 4 jam. Ia disegarkan pada setiap permintaan yang
+ * disahkan, jadi kerja berterusan tidak terputus, tetapi sesi yang ditinggalkan
+ * pada peranti berkongsi akan luput.
+ */
+const TEMPOH_SESI_SAAT = 60 * 60 * 4;
+
+/** Panjang minimum token moderator. Token pendek boleh diteka. */
+export const PANJANG_TOKEN_MINIMUM = 24;
 
 const AKAUN_PEMBANGUNAN = 'demo:demo-token-pembangunan';
 
@@ -69,8 +78,75 @@ export function sahkanKelayakan(id: string, token: string): boolean {
   return sama(dijangka, token);
 }
 
+/**
+ * Rahsia TOTP setiap moderator, contohnya:
+ *   MODERATOR_TOTP="aisyah:JBSWY3DPEHPK3PXP,farid:KRSXG5CTMVRXEZLU"
+ *
+ * Jika satu akaun mempunyai rahsia, kod TOTP WAJIB untuk akaun itu.
+ */
+function rahsiaTotp(): Map<string, string> {
+  const peta = new Map<string, string>();
+  for (const bahagian of (process.env.MODERATOR_TOTP ?? '').split(',')) {
+    const [id, rahsia] = bahagian.split(':');
+    if (id?.trim() && rahsia?.trim()) peta.set(id.trim(), rahsia.trim());
+  }
+  return peta;
+}
+
+export function totpDiperlukan(id: string): boolean {
+  return rahsiaTotp().has(id.trim());
+}
+
+/** Adakah setiap akaun yang dikonfigurasi mempunyai TOTP? */
+export function mfaLengkap(): boolean {
+  const akaun = [...senaraiAkaun().keys()];
+  const totp = rahsiaTotp();
+  return akaun.length > 0 && akaun.every((id) => totp.has(id));
+}
+
+/** Akaun dengan token yang terlalu pendek untuk selamat. */
+export function akaunTokenLemah(): string[] {
+  return [...senaraiAkaun().entries()]
+    .filter(([, token]) => token.length < PANJANG_TOKEN_MINIMUM)
+    .map(([id]) => id);
+}
+
+export function sahkanTotpModerator(id: string, kod: string): boolean {
+  const rahsia = rahsiaTotp().get(id.trim());
+  if (!rahsia) return true; // Tiada TOTP dikonfigurasi untuk akaun ini.
+  return sahkanTotp(rahsia, kod);
+}
+
 function tandatangan(muatan: string): string {
   return createHmac('sha256', rahsiaSesi()).update(muatan).digest('hex');
+}
+
+/**
+ * Token pra-sesi untuk langkah kedua log masuk.
+ *
+ * Selepas faktor pertama betul, pelayan mengeluarkan token bertandatangan
+ * berumur pendek. Borang menghantarnya semula bersama kod TOTP, jadi token
+ * moderator tidak perlu ditaip atau disimpan dalam DOM buat kali kedua.
+ *
+ * Awalan "pra" memastikan ia tidak boleh diterima sebagai kuki sesi penuh.
+ */
+const TEMPOH_PRA_SESI_SAAT = 5 * 60;
+
+export function ciptaPraSesi(id: string): string {
+  const luput = Math.floor(Date.now() / 1000) + TEMPOH_PRA_SESI_SAAT;
+  const muatan = `pra.${encodeURIComponent(id)}.${luput}`;
+  return `${muatan}.${tandatangan(muatan)}`;
+}
+
+export function bacaPraSesi(nilai: string | undefined): string | undefined {
+  if (!nilai) return undefined;
+  const bahagian = nilai.split('.');
+  if (bahagian.length !== 4 || bahagian[0] !== 'pra') return undefined;
+  const [awalan, id, luput, tanda] = bahagian as [string, string, string, string];
+  const muatan = `${awalan}.${id}.${luput}`;
+  if (!sama(tandatangan(muatan), tanda)) return undefined;
+  if (Number(luput) * 1000 < Date.now()) return undefined;
+  return decodeURIComponent(id);
 }
 
 export function ciptaToken(id: string): string {

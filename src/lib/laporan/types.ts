@@ -3,7 +3,18 @@ import type { ReportStatus } from '@/lib/status';
 export const JENIS_KENALAN = ['telefon', 'akaun_bank', 'url', 'syarikat', 'profil_sosial', 'lain'] as const;
 export type JenisKenalan = (typeof JENIS_KENALAN)[number];
 
-export const TINDAKAN_MODERATOR = ['terima', 'tolak', 'tanda_dipertikai', 'buang', 'buka_semula'] as const;
+export const TINDAKAN_MODERATOR = [
+  'terima',
+  'tolak',
+  'tanda_dipertikai',
+  'buang',
+  'buka_semula',
+  // Peristiwa keselamatan akaun admin — direkod dalam log audit yang sama.
+  'log_masuk',
+  'log_masuk_gagal',
+  'peranti_baharu',
+  'padam_data_peribadi',
+] as const;
 export type TindakanModerator = (typeof TINDAKAN_MODERATOR)[number];
 
 export function isJenisKenalan(value: unknown): value is JenisKenalan {
@@ -84,6 +95,8 @@ export type LogModerator = {
   moderator_id: string;
   tindakan: TindakanModerator;
   sebab: string | null;
+  /** Alamat IP pentadbir. Data kakitangan, bukan data pengguna awam. */
+  ip: string | null;
   tarikh: string;
 };
 

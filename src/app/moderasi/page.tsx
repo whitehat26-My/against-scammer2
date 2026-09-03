@@ -3,10 +3,11 @@ import Link from 'next/link';
 import { BorangMasuk } from '@/components/BorangMasuk';
 import { KadModerasi } from '@/components/KadModerasi';
 import { Callout } from '@/components/ui';
-import { logKeluar } from './actions';
+import { jalankanPembersihanSekarang, logKeluar } from './actions';
 import { dict, getLang } from '@/lib/i18n';
 import { getStore } from '@/lib/laporan/store';
-import { menggunakanAkaunLalai, moderasiDikonfigurasi, moderatorSemasa } from '@/lib/moderator';
+import { akaunTokenLemah, menggunakanAkaunLalai, mfaLengkap, moderasiDikonfigurasi, moderatorSemasa } from '@/lib/moderator';
+import { captchaDimatikanSecaraSengaja } from '@/lib/captcha';
 
 export const metadata: Metadata = {
   title: 'Moderasi',
@@ -69,6 +70,25 @@ export default async function ModerasiPage() {
         </div>
       </header>
 
+      {/* Amaran konfigurasi: ditunjukkan kepada moderator, bukan orang awam. */}
+      {!mfaLengkap() ? (
+        <Callout tone="bahaya">
+          <p style={{ marginBottom: 0 }}>{d.moderasi.amaranMfa}</p>
+        </Callout>
+      ) : null}
+      {captchaDimatikanSecaraSengaja() ? (
+        <Callout tone="amaran">
+          <p style={{ marginBottom: 0 }}>{d.moderasi.amaranCaptcha}</p>
+        </Callout>
+      ) : null}
+      {akaunTokenLemah().length > 0 ? (
+        <Callout tone="bahaya">
+          <p style={{ marginBottom: 0 }}>
+            {d.moderasi.amaranTokenLemah} ({akaunTokenLemah().join(', ')})
+          </p>
+        </Callout>
+      ) : null}
+
       <Callout tone="nota">
         <p style={{ marginBottom: 0 }}>{d.moderasi.tindakanNota}</p>
       </Callout>
@@ -114,7 +134,7 @@ export default async function ModerasiPage() {
                   d={d.moderasi}
                   dLapor={d.lapor}
                   lang={lang}
-                  tindakan={['tanda_dipertikai', 'buang']}
+                  tindakan={['tanda_dipertikai', 'buang', 'padam_data_peribadi']}
                 />
                 <p className="small">
                   <Link href={`/laporan/${laporan.id}`}>/laporan/{laporan.id.slice(0, 8)}…</Link>
@@ -123,6 +143,18 @@ export default async function ModerasiPage() {
             ))}
           </div>
         )}
+      </section>
+
+      <section className="panel kilau stack" aria-labelledby="pembersihan">
+        <h2 id="pembersihan" style={{ fontSize: '1.15rem' }}>
+          {d.moderasi.pembersihanTitle}
+        </h2>
+        <p className="muted small">{d.moderasi.pembersihanLead}</p>
+        <form action={jalankanPembersihanSekarang}>
+          <button type="submit" className="btn btn--secondary">
+            {d.moderasi.pembersihanCta}
+          </button>
+        </form>
       </section>
 
       <section className="stack" aria-labelledby="log">
@@ -140,6 +172,7 @@ export default async function ModerasiPage() {
                   <th scope="col">{d.moderasi.logLajur.moderator}</th>
                   <th scope="col">{d.moderasi.logLajur.tindakan}</th>
                   <th scope="col">{d.moderasi.logLajur.laporan}</th>
+                  <th scope="col">{d.moderasi.ipLajur}</th>
                   <th scope="col">{d.moderasi.logLajur.sebab}</th>
                 </tr>
               </thead>
@@ -150,6 +183,7 @@ export default async function ModerasiPage() {
                     <td>{baris.moderator_id}</td>
                     <td>{d.moderasi.tindakan[baris.tindakan]}</td>
                     <td>{baris.laporan_id?.slice(0, 8) ?? '—'}</td>
+                    <td>{baris.ip ?? '—'}</td>
                     <td>{baris.sebab ?? '—'}</td>
                   </tr>
                 ))}
