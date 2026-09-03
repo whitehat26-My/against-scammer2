@@ -13,6 +13,7 @@ import type {
 import { akhiranHash, awalanSah, hashNilai, normalkanNilai } from './nilai';
 import type { ReportStatus } from '@/lib/status';
 import { normalkanEmel, tokenSah, type Langganan } from '@/lib/digest';
+import { indeksButa, nyahsulit, nyahsulitPilihan, sulitkanPilihan } from '@/lib/kripto';
 
 type BarisLaporan = {
   id: string;
@@ -50,7 +51,7 @@ function keLaporan(baris: BarisLaporan): Laporan {
     bukti: baris.bukti_url ?? [],
     status: baris.status,
     bilangan_sokongan: Number(baris.bilangan_sokongan),
-    pelapor_emel: baris.pelapor_emel,
+    pelapor_emel: nyahsulitPilihan(baris.pelapor_emel),
     pdpa_persetujuan: baris.pdpa_persetujuan,
     pdpa_persetujuan_pada: baris.pdpa_persetujuan_pada.toISOString(),
     simpan_sehingga: baris.simpan_sehingga.toISOString().slice(0, 10),
@@ -105,7 +106,8 @@ export class PgStore implements LaporanStore, DigestStore {
         input.kategori_slug,
         input.penerangan,
         input.bukti,
-        input.pelapor_emel,
+        // Kontak pelapor disulitkan semasa simpan.
+        sulitkanPilihan(input.pelapor_emel),
       ],
     );
     return keLaporan(rows[0] as BarisLaporan);
@@ -202,9 +204,9 @@ export class PgStore implements LaporanStore, DigestStore {
       }
 
       await client.query(
-        `insert into moderator_log (report_id, moderator_id, tindakan, sebab)
-         values ($1, $2, $3, $4)`,
-        [input.laporan_id, input.moderator_id, input.tindakan, input.sebab],
+        `insert into moderator_log (report_id, moderator_id, tindakan, sebab, ip)
+         values ($1, $2, $3, $4, $5)`,
+        [input.laporan_id, input.moderator_id, input.tindakan, input.sebab, input.ip ?? null],
       );
 
       await client.query('commit');
@@ -243,7 +245,7 @@ export class PgStore implements LaporanStore, DigestStore {
       }>(
         `insert into dispute (report_id, pembantah_nama, pembantah_emel, hujah)
          values ($1, $2, $3, $4) returning *`,
-        [input.laporan_id, input.pembantah_nama, input.pembantah_emel, input.hujah],
+        [input.laporan_id, input.pembantah_nama, sulitkanPilihan(input.pembantah_emel), input.hujah],
       );
 
       await client.query(
@@ -258,7 +260,7 @@ export class PgStore implements LaporanStore, DigestStore {
         id: b.id,
         laporan_id: b.report_id,
         pembantah_nama: b.pembantah_nama,
-        pembantah_emel: b.pembantah_emel,
+        pembantah_emel: nyahsulit(b.pembantah_emel),
         hujah: b.hujah,
         diterima_pada: b.diterima_pada.toISOString(),
         diakui_pada: iso(b.diakui_pada),
@@ -290,7 +292,7 @@ export class PgStore implements LaporanStore, DigestStore {
       id: b.id,
       laporan_id: b.report_id,
       pembantah_nama: b.pembantah_nama,
-      pembantah_emel: b.pembantah_emel,
+      pembantah_emel: nyahsulit(b.pembantah_emel),
       hujah: b.hujah,
       diterima_pada: b.diterima_pada.toISOString(),
       diakui_pada: iso(b.diakui_pada),
@@ -307,6 +309,7 @@ export class PgStore implements LaporanStore, DigestStore {
       moderator_id: string;
       tindakan: LogModerator['tindakan'];
       sebab: string | null;
+      ip: string | null;
       tarikh: Date;
     }>('select * from moderator_log order by tarikh desc limit $1', [had]);
 
@@ -317,8 +320,50 @@ export class PgStore implements LaporanStore, DigestStore {
       moderator_id: r.moderator_id,
       tindakan: r.tindakan,
       sebab: r.sebab,
+      ip: r.ip,
       tarikh: r.tarikh.toISOString(),
     }));
+  }
+
+  async padamLaporan(id: string): Promise<void> {
+    await this.pool.query('delete from report where id = $1', [id]);
+  }
+
+  async padamDataPeribadi(id: string): Promise<void> {
+    await this.pool.query(
+      `update report
+          set pelapor_emel = null, pelapor_telefon = null, bukti_url = '{}', dikemaskini_pada = now()
+        where id = $1`,
+      [id],
+    );
+  }
+
+  async catatPeristiwaAdmin(input: {
+    moderator_id: string;
+    tindakan: LogModerator['tindakan'];
+    sebab: string | null;
+    ip: string | null;
+  }): Promise<void> {
+    await this.pool.query(
+      `insert into moderator_log (moderator_id, tindakan, sebab, ip) values ($1, $2, $3, $4)`,
+      [input.moderator_id, input.tindakan, input.sebab, input.ip],
+    );
+  }
+
+  async perantiDikenali(moderatorId: string, sidikJari: string): Promise<boolean> {
+    const { rowCount } = await this.pool.query(
+      'select 1 from admin_device where moderator_id = $1 and sidik_jari = $2',
+      [moderatorId, sidikJari],
+    );
+    return (rowCount ?? 0) > 0;
+  }
+
+  async daftarPeranti(moderatorId: string, sidikJari: string): Promise<void> {
+    await this.pool.query(
+      `insert into admin_device (moderator_id, sidik_jari) values ($1, $2)
+       on conflict (moderator_id, sidik_jari) do update set dilihat_pada = now()`,
+      [moderatorId, sidikJari],
+    );
   }
 
   // ---- Digest e-mel ----
@@ -328,26 +373,29 @@ export class PgStore implements LaporanStore, DigestStore {
     const { rows } = await this.pool.query<{
       id: string;
       emel: string;
+      emel_indeks: string;
       disahkan_pada: Date | null;
       token_sah: string;
       token_batal: string;
       pdpa_persetujuan: boolean;
       created_at: Date;
     }>(
-      `insert into digest_subscriber (emel, pdpa_persetujuan)
-       values ($1, true)
-       on conflict (emel) do update
+      // Alamat disimpan bersulit; `emel_indeks` (HMAC) adalah kunci unik.
+      `insert into digest_subscriber (emel, emel_indeks, pdpa_persetujuan)
+       values ($1, $2, true)
+       on conflict (emel_indeks) do update
          set token_sah = case
                when digest_subscriber.disahkan_pada is null then gen_random_uuid()
                else digest_subscriber.token_sah
              end
        returning *`,
-      [alamat],
+      [sulitkanPilihan(alamat), indeksButa(alamat)],
     );
     const baris = rows[0] as NonNullable<(typeof rows)[number]>;
     return {
       id: baris.id,
-      emel: baris.emel,
+      emel: alamat,
+      emel_indeks: baris.emel_indeks,
       disahkan_pada: iso(baris.disahkan_pada),
       token_sah: baris.token_sah,
       token_batal: baris.token_batal,

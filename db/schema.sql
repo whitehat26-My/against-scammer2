@@ -53,7 +53,11 @@ begin
     create type jenis_kenalan as enum ('telefon', 'akaun_bank', 'url', 'syarikat', 'profil_sosial', 'lain');
   end if;
   if not exists (select 1 from pg_type where typname = 'tindakan_moderator') then
-    create type tindakan_moderator as enum ('terima', 'tolak', 'tanda_dipertikai', 'buang', 'buka_semula');
+    create type tindakan_moderator as enum (
+      'terima', 'tolak', 'tanda_dipertikai', 'buang', 'buka_semula',
+      -- Peristiwa keselamatan akaun admin, direkod dalam log audit yang sama.
+      'log_masuk', 'log_masuk_gagal', 'peranti_baharu', 'padam_data_peribadi'
+    );
   end if;
 end $$;
 
@@ -78,6 +82,8 @@ create table if not exists report (
   bilangan_sokongan  integer not null default 1 check (bilangan_sokongan >= 1),
 
   -- Pelapor: SEMUANYA optional. Laporan tanpa nama diterima.
+  -- Disimpan BERSULIT (AES-256-GCM, lihat src/lib/kripto.ts) — pangkalan data
+  -- yang bocor tanpa kunci tidak mendedahkan sesiapa.
   pelapor_emel       text,
   pelapor_telefon    text,
 
@@ -138,6 +144,8 @@ create table if not exists dispute (
   report_id      uuid not null references report (id) on delete cascade,
   -- Pihak yang dinamakan boleh membantah. Kontak diperlukan untuk maklum balas.
   pembantah_nama text not null,
+  -- Bersulit. Nama dipaparkan awam (pihak itu menjawab secara terbuka);
+  -- alamat e-mel tidak pernah dipaparkan.
   pembantah_emel text not null,
   hujah          text not null check (length(btrim(hujah)) >= 20),
   dokumen_url    text[] not null default '{}',
@@ -162,8 +170,23 @@ create table if not exists moderator_log (
   moderator_id text not null,
   tindakan    tindakan_moderator not null,
   sebab       text,
+  -- IP pentadbir. Ini data kakitangan yang direkod untuk tujuan audit
+  -- keselamatan, bukan data pengguna awam.
+  ip          text,
   tarikh      timestamptz not null default now()
 );
+
+-- Peranti yang pernah digunakan oleh setiap moderator. Log masuk daripada
+-- sidik jari yang tidak dikenali mencetuskan amaran e-mel.
+create table if not exists admin_device (
+  moderator_id text not null,
+  -- SHA-256 bagi (ejen pengguna | IP). Nilai mentah tidak disimpan.
+  sidik_jari   text not null check (sidik_jari ~ '^[0-9a-f]{32}$'),
+  dilihat_pada timestamptz not null default now(),
+  primary key (moderator_id, sidik_jari)
+);
+
+alter table admin_device enable row level security;
 
 create index if not exists moderator_log_report_idx on moderator_log (report_id, tarikh desc);
 create index if not exists moderator_log_moderator_idx on moderator_log (moderator_id, tarikh desc);
@@ -197,7 +220,10 @@ create index if not exists article_tags_idx on article using gin (kategori_tags)
 
 create table if not exists digest_subscriber (
   id             uuid primary key default gen_random_uuid(),
-  emel           text not null unique,
+  -- Alamat disimpan bersulit; `emel_indeks` (HMAC deterministik) menjadi kunci
+  -- unik supaya carian berfungsi tanpa menyimpan alamat dalam bentuk jelas.
+  emel           text not null,
+  emel_indeks    text not null unique,
   -- Double opt-in: langganan hanya aktif selepas pengesahan emel.
   disahkan_pada  timestamptz,
   token_sah      uuid not null default gen_random_uuid(),

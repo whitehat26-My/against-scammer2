@@ -23,6 +23,15 @@ export type TindakanInput = {
   tindakan: TindakanModerator;
   moderator_id: string;
   sebab: string | null;
+  /** IP pentadbir, untuk log audit. */
+  ip?: string | null;
+};
+
+export type PeristiwaAdmin = {
+  moderator_id: string;
+  tindakan: TindakanModerator;
+  sebab: string | null;
+  ip: string | null;
 };
 
 /**
@@ -62,6 +71,15 @@ export interface LaporanStore {
   ciptaBantahan(input: BantahanInput): Promise<Bantahan | undefined>;
   bantahanUntuk(laporanId: string): Promise<Bantahan[]>;
   logModerator(had?: number): Promise<LogModerator[]>;
+  /** Buang laporan sepenuhnya (dasar simpanan atau permintaan PDPA). */
+  padamLaporan(id: string): Promise<void>;
+  /** Kekalkan laporan sebagai amaran, buang apa yang mengenal pasti pelapor. */
+  padamDataPeribadi(id: string): Promise<void>;
+  /** Rekod peristiwa keselamatan admin (log masuk, peranti baharu) dalam log audit. */
+  catatPeristiwaAdmin(input: PeristiwaAdmin): Promise<void>;
+  /** Adakah sidik jari peranti ini pernah digunakan oleh moderator berkenaan? */
+  perantiDikenali(moderatorId: string, sidikJari: string): Promise<boolean>;
+  daftarPeranti(moderatorId: string, sidikJari: string): Promise<void>;
 }
 
 export type Store = LaporanStore & DigestStore;

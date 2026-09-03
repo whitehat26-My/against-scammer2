@@ -13,7 +13,10 @@
 
 export type Langganan = {
   id: string;
+  /** Disimpan bersulit; dikembalikan dalam bentuk jelas oleh lapisan storan. */
   emel: string;
+  /** HMAC deterministik bagi alamat — untuk carian tanpa menyimpannya jelas. */
+  emel_indeks: string;
   disahkan_pada: string | null;
   /** Token untuk mengesahkan langganan (double opt-in). */
   token_sah: string;

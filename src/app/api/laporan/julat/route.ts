@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
+import { ipKlien } from '@/lib/ip';
 import { awalanSah } from '@/lib/laporan/nilai';
 import { getStore } from '@/lib/laporan/store';
+import { hadKadar } from '@/lib/rate-limit';
 
 /**
  * Carian laporan komuniti secara k-anonymity.
@@ -15,6 +17,15 @@ export async function GET(request: Request): Promise<NextResponse> {
   const awalan = new URL(request.url).searchParams.get('awalan') ?? '';
   if (!awalanSah(awalan)) {
     return NextResponse.json({ ralat: 'awalan tidak sah' }, { status: 400 });
+  }
+
+  // Had kadar: menghalang penyalahgunaan endpoint ini. Alat semakan menghantar
+  // paling banyak dua permintaan setiap carian, jadi 120 dalam lima minit
+  // membenarkan kira-kira 60 carian — longgar untuk seorang manusia, dan juga
+  // untuk beberapa orang yang berkongsi satu IP pejabat.
+  const ip = ipKlien(request.headers);
+  if (!hadKadar(`julat:${ip}`, 120, 5 * 60).dibenarkan) {
+    return NextResponse.json({ ralat: 'terlalu banyak permintaan' }, { status: 429, headers: { 'retry-after': '300' } });
   }
 
   try {

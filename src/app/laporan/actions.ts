@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { getStore } from '@/lib/laporan/store';
 import { sahkanBorangBantahan, type KodRalat } from '@/lib/laporan/validasi';
 import { hadKadar } from '@/lib/rate-limit';
+import { ipKlien } from '@/lib/ip';
 
 export type KeadaanBantahan = {
   ok?: boolean;
@@ -15,8 +16,7 @@ export type KeadaanBantahan = {
 };
 
 async function pengenalPermintaan(): Promise<string> {
-  const h = await headers();
-  return h.get('x-forwarded-for')?.split(',')[0]?.trim() || h.get('x-real-ip') || 'tempatan';
+  return ipKlien(await headers());
 }
 
 export async function sokongLaporan(data: FormData): Promise<void> {

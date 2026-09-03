@@ -1,5 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { bacaToken, ciptaToken, menggunakanAkaunLalai, moderasiDikonfigurasi, sahkanKelayakan } from '@/lib/moderator';
+import {
+  akaunTokenLemah,
+  bacaToken,
+  ciptaToken,
+  menggunakanAkaunLalai,
+  mfaLengkap,
+  moderasiDikonfigurasi,
+  sahkanKelayakan,
+  sahkanTotpModerator,
+  totpDiperlukan,
+} from '@/lib/moderator';
+import { janaTotp } from '@/lib/totp';
 import { hadKadar, kosongkanHadKadar } from '@/lib/rate-limit';
 
 const ENV_ASAL = { akaun: process.env.MODERATOR_AKAUN, rahsia: process.env.SESSION_SECRET };
@@ -39,6 +50,38 @@ describe('kelayakan moderator', () => {
     vi.stubEnv('NODE_ENV', 'development');
     expect(menggunakanAkaunLalai()).toBe(true);
     expect(moderasiDikonfigurasi()).toBe(true);
+    vi.unstubAllEnvs();
+  });
+});
+
+describe('pengesahan dua faktor moderator', () => {
+  const RAHSIA = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
+
+  it('TOTP diperlukan hanya untuk akaun yang mempunyai rahsia', () => {
+    vi.stubEnv('MODERATOR_TOTP', `aisyah:${RAHSIA}`);
+    expect(totpDiperlukan('aisyah')).toBe(true);
+    expect(totpDiperlukan('farid')).toBe(false);
+    vi.unstubAllEnvs();
+  });
+
+  it('menerima kod semasa dan menolak kod salah', () => {
+    vi.stubEnv('MODERATOR_TOTP', `aisyah:${RAHSIA}`);
+    expect(sahkanTotpModerator('aisyah', janaTotp(RAHSIA))).toBe(true);
+    expect(sahkanTotpModerator('aisyah', '000000')).toBe(false);
+    vi.unstubAllEnvs();
+  });
+
+  it('melaporkan apabila sebahagian akaun tiada MFA', () => {
+    vi.stubEnv('MODERATOR_TOTP', `aisyah:${RAHSIA}`);
+    expect(mfaLengkap()).toBe(false);
+    vi.stubEnv('MODERATOR_TOTP', `aisyah:${RAHSIA},farid:${RAHSIA}`);
+    expect(mfaLengkap()).toBe(true);
+    vi.unstubAllEnvs();
+  });
+
+  it('mengesan token yang terlalu pendek', () => {
+    vi.stubEnv('MODERATOR_AKAUN', 'aisyah:pendek,farid:token-yang-cukup-panjang-untuk-selamat');
+    expect(akaunTokenLemah()).toEqual(['aisyah']);
     vi.unstubAllEnvs();
   });
 });

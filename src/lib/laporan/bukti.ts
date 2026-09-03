@@ -2,6 +2,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { dataDir } from './file-store';
+import { imbasBukti, imbasanMembenarkan } from '@/lib/imbasan';
+import { nyahsulitBait, sulitkanBait } from '@/lib/kripto';
 
 export { MAKS_FAIL, MAKS_BAIT } from './bukti.client';
 import { MAKS_BAIT } from './bukti.client';
@@ -127,20 +129,39 @@ export function buktiDir(): string {
   return path.join(dataDir(), 'bukti');
 }
 
-export type HasilSimpan = { nama: string } | { ralat: 'jenis' | 'saiz' };
+export type HasilSimpan = { nama: string } | { ralat: 'jenis' | 'saiz' | 'malware' };
 
-/** Simpan satu fail bukti. Nama fail dijana; nama asal pengguna tidak disimpan. */
+/**
+ * Simpan satu fail bukti.
+ *
+ * Urutan penting: saiz → jenis sebenar (bait ajaib) → buang metadata →
+ * imbas malware → sulitkan → tulis. Nama fail dijana; nama asal daripada
+ * pengguna tidak pernah menyentuh sistem fail.
+ */
 export async function simpanBukti(fail: File): Promise<HasilSimpan> {
   if (fail.size > MAKS_BAIT) return { ralat: 'saiz' };
+
   const bait = new Uint8Array(await fail.arrayBuffer());
   const jenis = kenalPastiImej(bait);
   if (!jenis) return { ralat: 'jenis' };
 
   const bersih = buangMetadata(bait, jenis);
+
+  // Gagal-tutup: pengimbas yang dikonfigurasi tetapi tidak dapat dihubungi
+  // menolak muat naik, bukan membenarkannya.
+  const imbasan = await imbasBukti(bersih);
+  if (!imbasanMembenarkan(imbasan)) return { ralat: 'malware' };
+
   const nama = `${randomUUID()}.${jenis.ext}`;
   await fs.mkdir(buktiDir(), { recursive: true });
-  await fs.writeFile(path.join(buktiDir(), nama), bersih);
+  await fs.writeFile(path.join(buktiDir(), nama), sulitkanBait(bersih));
   return { nama };
+}
+
+/** Buang satu fail bukti daripada cakera (pembersihan / permintaan PDPA). */
+export async function buangBukti(nama: string): Promise<void> {
+  if (!/^[0-9a-f-]{36}\.(jpg|png|webp)$/.test(nama)) return;
+  await fs.rm(path.join(buktiDir(), nama), { force: true });
 }
 
 const MIME_IKUT_EXT: Record<string, string> = {
@@ -156,7 +177,7 @@ export async function bacaBukti(nama: string): Promise<{ bait: Uint8Array; mime:
   if (!padanan || !ext) return undefined;
   try {
     const bait = await fs.readFile(path.join(buktiDir(), nama));
-    return { bait: new Uint8Array(bait), mime: MIME_IKUT_EXT[ext] as string };
+    return { bait: nyahsulitBait(new Uint8Array(bait)), mime: MIME_IKUT_EXT[ext] as string };
   } catch {
     return undefined;
   }

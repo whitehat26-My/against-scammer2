@@ -15,18 +15,27 @@ import {
 } from './types';
 import { akhiranHash, awalanHash, awalanSah, hashNilai, normalkanNilai } from './nilai';
 import { normalkanEmel, tokenSah, type Langganan } from '@/lib/digest';
+import { indeksButa, nyahsulitPilihan, sulitkanPilihan } from '@/lib/kripto';
+
+type Peranti = { moderator_id: string; sidik_jari: string; dilihat_pada: string };
 
 type Data = {
   laporan: Laporan[];
   bantahan: Bantahan[];
   log: LogModerator[];
   digest: Langganan[];
+  peranti: Peranti[];
 };
 
-const KOSONG: Data = { laporan: [], bantahan: [], log: [], digest: [] };
+const KOSONG: Data = { laporan: [], bantahan: [], log: [], digest: [], peranti: [] };
 
 export function dataDir(): string {
   return process.env.DATA_DIR ?? path.join(process.cwd(), '.data');
+}
+
+/** Nyahsulit medan peribadi sebelum ia meninggalkan lapisan storan. */
+function bacaLaporan(laporan: Laporan): Laporan {
+  return { ...laporan, pelapor_emel: nyahsulitPilihan(laporan.pelapor_emel) };
 }
 
 /**
@@ -49,6 +58,7 @@ export class FileStore implements LaporanStore, DigestStore {
         bantahan: data.bantahan ?? [],
         log: data.log ?? [],
         digest: data.digest ?? [],
+        peranti: data.peranti ?? [],
       };
     } catch {
       return structuredClone(KOSONG);
@@ -92,7 +102,8 @@ export class FileStore implements LaporanStore, DigestStore {
         // Moderation-first: tiada laporan bermula dalam keadaan tersiar.
         status: 'belum_disemak',
         bilangan_sokongan: 1,
-        pelapor_emel: input.pelapor_emel,
+        // Kontak pelapor disulitkan semasa simpan; hanya moderator melihatnya.
+        pelapor_emel: sulitkanPilihan(input.pelapor_emel),
         pdpa_persetujuan: true,
         pdpa_persetujuan_pada: sekarang,
         simpan_sehingga: simpanSehingga,
@@ -111,7 +122,8 @@ export class FileStore implements LaporanStore, DigestStore {
 
   async dapatkan(id: string): Promise<Laporan | undefined> {
     const data = await this.baca();
-    return data.laporan.find((l) => l.id === id);
+    const laporan = data.laporan.find((l) => l.id === id);
+    return laporan ? bacaLaporan(laporan) : undefined;
   }
 
   async senarai(pilihan: PilihanSenarai = {}): Promise<Laporan[]> {
@@ -119,7 +131,8 @@ export class FileStore implements LaporanStore, DigestStore {
     let hasil = [...data.laporan].sort((a, b) => b.tarikh_hantar.localeCompare(a.tarikh_hantar));
     if (pilihan.giliran) hasil = hasil.filter(dalamGiliran);
     if (pilihan.status) hasil = hasil.filter((l) => pilihan.status?.includes(l.status));
-    return pilihan.had ? hasil.slice(0, pilihan.had) : hasil;
+    const dipotong = pilihan.had ? hasil.slice(0, pilihan.had) : hasil;
+    return dipotong.map(bacaLaporan);
   }
 
   async julatIkutAwalan(awalan: string): Promise<PadananJulat[]> {
@@ -144,7 +157,7 @@ export class FileStore implements LaporanStore, DigestStore {
       // Kiraan naik, status TIDAK berubah.
       laporan.bilangan_sokongan += 1;
       laporan.dikemaskini_pada = new Date().toISOString();
-      return laporan;
+      return bacaLaporan(laporan);
     });
   }
 
@@ -193,10 +206,11 @@ export class FileStore implements LaporanStore, DigestStore {
         moderator_id: input.moderator_id,
         tindakan: input.tindakan,
         sebab: input.sebab,
+        ip: input.ip ?? null,
         tarikh: sekarang,
       });
 
-      return laporan;
+      return bacaLaporan(laporan);
     });
   }
 
@@ -210,7 +224,7 @@ export class FileStore implements LaporanStore, DigestStore {
         id: randomUUID(),
         laporan_id: input.laporan_id,
         pembantah_nama: input.pembantah_nama,
-        pembantah_emel: input.pembantah_emel,
+        pembantah_emel: sulitkanPilihan(input.pembantah_emel) as string,
         hujah: input.hujah,
         diterima_pada: sekarang,
         diakui_pada: null,
@@ -228,7 +242,9 @@ export class FileStore implements LaporanStore, DigestStore {
 
   async bantahanUntuk(laporanId: string): Promise<Bantahan[]> {
     const data = await this.baca();
-    return data.bantahan.filter((b) => b.laporan_id === laporanId);
+    return data.bantahan
+      .filter((b) => b.laporan_id === laporanId)
+      .map((b) => ({ ...b, pembantah_emel: nyahsulitPilihan(b.pembantah_emel) as string }));
   }
 
   async logModerator(had = 100): Promise<LogModerator[]> {
@@ -236,20 +252,73 @@ export class FileStore implements LaporanStore, DigestStore {
     return data.log.slice(0, had);
   }
 
+  async padamLaporan(id: string): Promise<void> {
+    await this.kemas((data) => {
+      data.laporan = data.laporan.filter((l) => l.id !== id);
+      data.bantahan = data.bantahan.filter((b) => b.laporan_id !== id);
+    });
+  }
+
+  async padamDataPeribadi(id: string): Promise<void> {
+    await this.kemas((data) => {
+      const laporan = data.laporan.find((l) => l.id === id);
+      if (!laporan) return;
+      laporan.pelapor_emel = null;
+      laporan.bukti = [];
+      laporan.dikemaskini_pada = new Date().toISOString();
+    });
+  }
+
+  async catatPeristiwaAdmin(input: {
+    moderator_id: string;
+    tindakan: LogModerator['tindakan'];
+    sebab: string | null;
+    ip: string | null;
+  }): Promise<void> {
+    await this.kemas((data) => {
+      data.log.unshift({
+        id: randomUUID(),
+        laporan_id: null,
+        bantahan_id: null,
+        moderator_id: input.moderator_id,
+        tindakan: input.tindakan,
+        sebab: input.sebab,
+        ip: input.ip,
+        tarikh: new Date().toISOString(),
+      });
+    });
+  }
+
+  async perantiDikenali(moderatorId: string, sidikJari: string): Promise<boolean> {
+    const data = await this.baca();
+    return data.peranti.some((p) => p.moderator_id === moderatorId && p.sidik_jari === sidikJari);
+  }
+
+  async daftarPeranti(moderatorId: string, sidikJari: string): Promise<void> {
+    await this.kemas((data) => {
+      const sedia = data.peranti.find((p) => p.moderator_id === moderatorId && p.sidik_jari === sidikJari);
+      if (sedia) sedia.dilihat_pada = new Date().toISOString();
+      else data.peranti.push({ moderator_id: moderatorId, sidik_jari: sidikJari, dilihat_pada: new Date().toISOString() });
+    });
+  }
+
   // ---- Digest e-mel ----
 
   async langgan(emel: string): Promise<Langganan> {
     const alamat = normalkanEmel(emel);
+    const indeks = indeksButa(alamat);
     return this.kemas((data) => {
-      const sedia = data.digest.find((l) => l.emel === alamat);
+      const sedia = data.digest.find((l) => l.emel_indeks === indeks);
       if (sedia) {
         // Belum disahkan: jana token baharu supaya pautan lama tidak kekal sah.
         if (!sedia.disahkan_pada) sedia.token_sah = randomUUID();
-        return sedia;
+        return { ...sedia, emel: alamat };
       }
       const baharu: Langganan = {
         id: randomUUID(),
-        emel: alamat,
+        // Alamat disimpan bersulit; carian menggunakan indeks buta.
+        emel: sulitkanPilihan(alamat) as string,
+        emel_indeks: indeks,
         disahkan_pada: null,
         token_sah: randomUUID(),
         token_batal: randomUUID(),
@@ -257,7 +326,7 @@ export class FileStore implements LaporanStore, DigestStore {
         created_at: new Date().toISOString(),
       };
       data.digest.push(baharu);
-      return baharu;
+      return { ...baharu, emel: alamat };
     });
   }
 
