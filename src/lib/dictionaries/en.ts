@@ -1,0 +1,608 @@
+import type { Dictionary } from '../i18n';
+
+/**
+ * English dictionary. Must mirror `ms.ts` key for key — TypeScript enforces this
+ * because `Dictionary` is derived from the Bahasa Malaysia dictionary.
+ */
+export const en: Dictionary = {
+  meta: {
+    title: 'Malaysia Scam Check Portal',
+    titlePendek: 'Scam Check',
+    titleTemplate: '%s — Scam Check Portal',
+    description:
+      'Learn how the latest scams in Malaysia actually work, in plain language, and where to go for official verification.',
+  },
+  nav: {
+    skip: 'Skip to main content',
+    home: 'Home',
+    taktik: 'Scam tactics',
+    taktikPendek: 'Tactics',
+    semak: 'Check',
+    bantuan: 'If you were scammed',
+    bantuanPendek: 'Help',
+    lapor: 'Report',
+    berita: 'News',
+    tentang: 'About',
+    moderasi: 'Moderation',
+    menu: 'Menu',
+  },
+  lang: {
+    label: 'Language',
+    ms: 'BM',
+    en: 'EN',
+    switchTo: 'Switch to Bahasa Malaysia',
+    current: 'Current language: English',
+  },
+  banner: {
+    text: 'A community portal — not an official government site.',
+    cta: 'Semak Mule (PDRM)',
+    urgent: 'Just scammed? Call 997',
+  },
+  common: {
+    kemasKini: 'Updated',
+    risiko: 'Risk level',
+    platform: 'Platform',
+    jugaDikenali: 'Also known as',
+    redFlags: 'Red flags',
+    contohMesej: 'Example messages / scripts',
+    kenapaBahaya: 'Why it works',
+    caraBermula: 'How it starts',
+    semua: 'All',
+    cari: 'Search',
+    kosongkan: 'Clear',
+    tapis: 'Filter',
+    bacaLagi: 'Read the full entry',
+    sumber: 'Source',
+    pautanLuar: 'external link',
+    salin: 'Copy',
+    disalin: 'Copied',
+    contohAnonim:
+      'The examples below are rewritten (anonymised). They are not real screenshots from any victim.',
+    terjemahanBelumSedia:
+      'This entry is not available in your chosen language yet. The Bahasa Malaysia text is shown.',
+  },
+  home: {
+    eyebrow: 'Check first, transfer later',
+    title: 'Know the scam before it reaches you',
+    lead:
+      'New tactics appear every week. This portal explains how each scam starts, the warning signs you can spot early, and where to go for an official check.',
+    searchTitle: 'Want to check something?',
+    searchLead:
+      'Enter a phone number, bank account number, company name or website link. The check runs inside your browser only.',
+    ctaSemak: 'Open the check tool',
+    ctaTaktik: 'Browse all scam tactics',
+    ctaBantuan: 'I think I have been scammed',
+    taktikEyebrow: 'Encyclopedia',
+    caraEyebrow: 'How to use it',
+    hadEyebrow: 'Scope & limits',
+    ctaSemakSekarang: 'Check now',
+    taktikTitle: 'The most common playbooks',
+    taktikLead: 'Open any category to see the warning signs and rewritten examples of the real messages.',
+    taktikSemua: 'See all categories',
+    caraTitle: 'How this portal works',
+    caraSteps: [
+      {
+        tajuk: 'Learn',
+        teks: 'Read the encyclopedia of scam playbooks — written for the public, not for investigators.',
+      },
+      {
+        tajuk: 'Check',
+        teks: 'Use the check tool to identify what kind of detail you are holding, then follow the official check on Semak Mule.',
+      },
+      {
+        tajuk: 'Act',
+        teks: 'If money has already left your account, follow the 997 steps immediately. The first hour matters most.',
+      },
+    ],
+    hadTitle: 'What this portal does not do',
+    hadItems: [
+      'We do not build or mirror any criminal record database. Official checks stay on Semak Mule (PDRM).',
+      'We never label anyone a “confirmed scammer”. Only the police and the courts can determine criminal status.',
+      'We do not replace a police report or the NSRC 997 hotline.',
+    ],
+    hadCta: 'Read about this portal’s scope and limits',
+  },
+  taktik: {
+    title: 'Scam tactics encyclopedia',
+    lead:
+      'Each entry explains how the scam starts, the warning signs you can spot, and rewritten example messages so you recognise the style.',
+    cariPlaceholder: 'Search tactics, e.g. “loan”, “parcel”, “OTP”',
+    tapisPlatform: 'Filter by platform',
+    tapisRisiko: 'Filter by risk level',
+    hasil: '{n} categories shown',
+    tiadaHasil: 'No category matches your filters.',
+    tiadaHasilCta: 'Clear filters',
+    kategoriTiadaTitle: 'Category not found',
+    kategoriTiadaLead: 'The entry you are looking for may have moved or is not published yet.',
+    kembali: 'Back to all tactics',
+    langkahPantasTitle: 'If it already happened to you',
+    langkahPantasCta: 'See the full 997 steps',
+    ringkasanNav: 'In this entry',
+  },
+  semak: {
+    title: 'Check tool',
+    lead:
+      'Enter a phone number, bank account number, company name or link. The tool identifies what kind of detail it is and shows you the right official check.',
+    placeholder: 'e.g. 012-345 6789 or contoh-tipu.xyz',
+    label: 'What would you like to check',
+    butang: 'Check',
+    reset: 'Check something else',
+    privasiNota:
+      'Your query is never sent to our servers and is never stored. Everything happens inside your browser.',
+    privasiPautan: 'How we protect search privacy',
+    kosongRalat: 'Please enter something to check.',
+    hasilTitle: 'Check result',
+    dikenalPastiSebagai: 'Identified as',
+    bolehJadiJuga: 'Could also be',
+    rasmiTitle: 'Official verification steps',
+    rasmiLead:
+      'This portal holds no criminal records. For an official check, use the PDRM portal below.',
+    semakMuleCta: 'Run the official check on Semak Mule',
+    semakMuleNota: 'External link to semakmule.rmp.gov.my (the official PDRM site).',
+    komunitiTitle: 'Community reports',
+    komunitiMenyemak: 'Checking community reports…',
+    komunitiTiada:
+      'No community reports match. That does NOT mean it is safe — most numbers used in scams have never been reported by anyone.',
+    komunitiAda: '{n} community reports match this detail.',
+    komunitiLihat: 'View reports',
+    komunitiPrivasi:
+      'This check uses partial matching: your browser sends only the first 5 characters of the detail’s fingerprint, so the server never learns what you searched for.',
+    komunitiRalat: 'The community report check could not run right now. Please use the official check below.',
+    komunitiStatusCta: 'How report statuses work',
+    laporCta: 'Report to the community',
+    laporNota:
+      'A community report is an early warning, not a police report. For a case that just happened, call 997 first.',
+    kinds: {
+      telefon: 'Phone number',
+      akaun_bank: 'Bank account number',
+      url: 'Link / website',
+      syarikat: 'Company or person name',
+      kosong: 'No input',
+    },
+    panduan: {
+      telefon: [
+        'Check this number on Semak Mule (PDRM) — it shows whether the number has been reported in a fraud case.',
+        'A “clean” number does not mean it is safe. Fresh numbers are used every single day.',
+        'Never share an OTP, even if the caller says they are from your bank, the police or a courier.',
+      ],
+      akaun_bank: [
+        'Check this account number on Semak Mule before you transfer anything.',
+        'If a seller asks you to pay into an account under someone else’s name, treat that as a major warning sign.',
+        'Screenshot the account details before you pay — you will need them if you have to file a report.',
+      ],
+      url: [
+        'Read the domain letter by letter. Most phishing sites differ by only one or two characters.',
+        'Never log in to online banking through a link in an SMS or WhatsApp. Type the address yourself or use the official app.',
+        'Official Malaysian government sites end in .gov.my.',
+      ],
+      syarikat: [
+        'Check whether the company is registered with SSM, and whether it appears on Bank Negara’s Financial Consumer Alert list.',
+        'Search the company name together with “scam” or “tipu” before you deal with them.',
+        'For investments, check the licence on the Securities Commission site. “Guaranteed” returns are a warning sign.',
+      ],
+      kosong: [],
+    },
+    hints: {
+      title: 'Automatic observations about this address',
+      lead:
+        'These are quick technical observations about the address you entered — not confirmation that it is a scam. A site with no observations can still be dangerous.',
+      pelajariCta: 'Learn to spot phishing links',
+      tiada: 'No technical warning signs detected in this address. That still does not mean the site is safe.',
+      codes: {
+        bukan_https: 'The address uses http:// instead of https:// — the connection is not encrypted.',
+        alamat_ip: 'The address uses a raw IP number instead of a domain name. Legitimate sites rarely do this.',
+        punycode: 'The domain contains disguised non-Latin characters (punycode) — often used to imitate brand names.',
+        pemendek_url: 'This is a shortened link. The real destination stays hidden until you click.',
+        tiru_gov: 'The address contains government-related words but does not end in .gov.my.',
+        tiru_jenama: 'The address contains a well-known brand name but the domain is not that brand’s official one.',
+        subdomain_panjang: 'The address has many subdomains — a common way to hide the real domain.',
+        tld_kerap_disalahguna: 'This domain ending is frequently used in scam campaigns. That is not proof, just a reason to be careful.',
+        domain_pelik: 'The domain name has many hyphens or digits — a typical pattern for bulk-generated domains.',
+      },
+    },
+  },
+  bantuan: {
+    title: 'If you have been scammed',
+    lead:
+      'Take a breath. You are not stupid — these syndicates do this full time. What matters right now is speed.',
+    masaTitle: 'The first hour matters most',
+    masaLead:
+      'Money that has just been transferred can sometimes still be frozen if your bank and NSRC are told quickly. Once it is withdrawn or split across other accounts, that chance drops sharply.',
+    langkahTitle: 'Step by step',
+    langkah: [
+      {
+        tajuk: 'Stop paying and cut contact',
+        teks: 'Send nothing more, even if they say “just one more payment to release the funds”. Extra payment requests after you start doubting are part of the script.',
+      },
+      {
+        tajuk: 'Call your bank immediately',
+        teks: 'Use the official number on the back of your card or inside the banking app — not a number given to you by the caller. Ask them to block the transaction and get a complaint reference number.',
+      },
+      {
+        tajuk: 'Call NSRC on 997',
+        teks: 'The National Scam Response Centre. They coordinate between banks and the police to try to freeze the receiving account.',
+      },
+      {
+        tajuk: 'File a police report',
+        teks: 'Go to the nearest police station. A police report is required for an official investigation and for any later claim. Bring all the evidence you have.',
+      },
+      {
+        tajuk: 'Collect and keep your evidence',
+        teks: 'Screenshots of the chat, transfer receipts, the receiving account number and name, phone numbers, website links and social media profile names.',
+      },
+      {
+        tajuk: 'Secure your digital accounts',
+        teks: 'Change your banking and email passwords, turn on two-factor authentication, and remove any app they told you to install.',
+      },
+      {
+        tajuk: 'Look after yourself',
+        teks: 'Shame and anger after being scammed are normal. Talk to someone you trust, and call a support line if it starts affecting your health.',
+      },
+    ],
+    siapkanTitle: 'Have this ready before you call 997',
+    siapkan: [
+      'The receiving bank account number and the name on that account',
+      'The amount transferred and the time of the transaction',
+      'The transaction reference number from your banking app',
+      'The phone number, Telegram handle or social media profile that contacted you',
+      'A short summary of what happened, in order',
+    ],
+    saluranTitle: 'Official channels',
+    saluranLead: 'Every link below is an official site. We only point you to them.',
+    jangkaanTitle: 'What to expect',
+    jangkaan: [
+      'Filing a report does not guarantee your money comes back. A freeze only works while the money is still in the receiving account.',
+      'Investigations take time. Keep your report reference number so you can follow up.',
+      'Anyone offering a paid “fund recovery service” up front is almost certainly a second scam aimed at you.',
+    ],
+    emosiTitle: 'Emotional support',
+    emosiLead:
+      'If you feel overwhelmed, ashamed or unable to function normally, call a support line. It is free and confidential.',
+    emosiTalian: [
+      { nama: 'Talian Kasih (KPWKM)', nombor: '15999' },
+      { nama: 'Befrienders KL', nombor: '03-7627 2929' },
+    ],
+  },
+  laporan: {
+    title: 'Community report status system',
+    lead:
+      'Every community report carries one of the three statuses below. None of them means a crime has been confirmed — only the police and the courts can determine that.',
+    kenapaTitle: 'Why these labels matter',
+    kenapaLead:
+      'A single public report is not proof of a crime. The wrong label can destroy the name of someone innocent — including victims whose accounts were stolen and used as mule accounts. That is why none of the statuses below means “confirmed”.',
+    statusTitle: 'The three statuses we use',
+    peraturanTitle: 'Fixed rules',
+    peraturan: [
+      'No report is published automatically. Every report is reviewed by a moderator first.',
+      'The label stays “reported” even if ten people report the same thing. The count is shown; the status is not upgraded.',
+      'The named party can object, and their explanation is displayed alongside the report.',
+      'Every moderator action is written to an audit log: who, what action, when.',
+    ],
+    hakCta: 'Right of reply channel',
+  },
+  hakMenjawab: {
+    title: 'Right of reply',
+    lead:
+      'If your name, phone number, account number or business is mentioned in a report on this portal, you have the right to object and give your side.',
+    siapaTitle: 'Who can use this channel',
+    siapa: [
+      'Individuals whose phone number or account number appears in a report.',
+      'Businesses or companies named in a report.',
+      'An authorised representative of either of the above.',
+    ],
+    caraTitle: 'How to object',
+    cara: [
+      'Email the address below with the link or reference of the report.',
+      'Tell us which part you dispute and why.',
+      'Attach any supporting documents, for example your own police report if your account was stolen.',
+    ],
+    prosesTitle: 'What happens next',
+    proses: [
+      'We acknowledge your message within 3 working days.',
+      'The report is marked “Disputed” while we review it, and your explanation is shown alongside it.',
+      'We tell you the outcome within 14 working days: the report stays disputed, is amended, or is removed entirely.',
+      'Every action is recorded in our audit log.',
+    ],
+    pdpaTitle: 'Data correction or deletion requests',
+    pdpaLead:
+      'Under the Personal Data Protection Act 2010 you may request access to, correction of, or deletion of your personal data. Use the same email address and state your request clearly.',
+    kontakTitle: 'Contact us',
+    kontakNota:
+      'Replace this address with your team’s real inbox before launching the portal to the public.',
+  },
+  privasi: {
+    title: 'Privacy notice',
+    lead:
+      'This notice explains what data we collect, why, how long we keep it, and how you can ask for correction or deletion — as required by the Personal Data Protection Act 2010 (PDPA).',
+    carianTitle: 'Your searches are not stored',
+    carianLead:
+      'The check tool runs entirely in your browser. The phone number, account number, name or link you type is never sent to our servers, never logged, and never linked to you.',
+    carianButiran: [
+      'We keep no search log containing your query text.',
+      'Query text never goes into the URL, so it cannot leak through browser history or links you share.',
+      'When you click through to Semak Mule, our server sets a “no-referrer” policy so that site is not told where you came from.',
+      'If we ever need usage numbers, we will record only the type of check (for example “phone”) with no query text and no user identifier.',
+    ],
+    kumpulTitle: 'What we collect today',
+    kumpul: [
+      { apa: 'Language preference', kenapa: 'To remember whether you want BM or EN.', simpan: 'A cookie kept for 1 year. It contains no user identifier.' },
+      { apa: 'Basic server logs', kenapa: 'Needed to serve the site and detect abuse.', simpan: 'Handled by our hosting provider under their defaults. We do not use them to profile users.' },
+      { apa: 'Community report content', kenapa: 'To assess the report and, if published, warn other people early.', simpan: 'Two years from the report date, then deleted if no longer needed.' },
+      { apa: 'Reporter email (optional)', kenapa: 'So a moderator can contact you if the report needs clarification.', simpan: 'With the report. Never shown to the public.' },
+      { apa: 'Evidence images (optional)', kenapa: 'To help moderators assess the report.', simpan: 'Moderator access only. Image metadata is stripped before storage.' },
+      { apa: 'Right-of-reply objection details', kenapa: 'To handle the objection and tell you the outcome.', simpan: 'With the objection record and its related audit log.' },
+      { apa: 'Digest email address (opt-in)', kenapa: 'To send the weekly digest you asked for.', simpan: 'Until you unsubscribe. Unsubscribing deletes your address entirely rather than just flagging it.' },
+    ],
+    fasaTitle: 'When you submit a community report',
+    fasaLead:
+      'The report form collects personal data, so the following principles apply to every report submitted.',
+    fasa: [
+      'The form only asks for what is genuinely needed to assess a report.',
+      'Giving an email is optional. Anonymous reports are fully accepted.',
+      'PDPA consent is asked for via a checkbox before submission, not buried in terms.',
+      'Uploaded evidence can only be viewed by signed-in moderators. Image metadata, including GPS coordinates, is stripped automatically before the file is stored.',
+      'A reporter’s email is never shown to the public.',
+      'Personal data is kept for two years from the report date, then deleted if it is no longer needed.',
+      'You can ask for access, correction or deletion of your data at any time.',
+    ],
+    hakTitle: 'Your rights',
+    hakLead:
+      'You have the right to request access to your personal data, ask for corrections if it is inaccurate, withdraw consent, and request deletion. We reply within 14 working days.',
+    hakCta: 'Make a request or objection',
+    kemasKiniTitle: 'Changes to this notice',
+    kemasKiniLead:
+      'If we change how data is handled, this notice is updated and the date below changes before the change takes effect.',
+  },
+  tentang: {
+    title: 'About this portal',
+    lead:
+      'The Malaysia Scam Check Portal is a community project. It complements — it does not replace — the official government systems.',
+    tujuanTitle: 'Why this portal exists',
+    tujuanLead:
+      'Official systems answer the question “has this number been reported?”. They do not publicly explain how each scam works, or what you should notice before you become a victim. That is the gap this portal tries to fill.',
+    bezaTitle: 'How this differs from official systems',
+    bezaRasmiTitle: 'Official systems',
+    bezaRasmi: [
+      'Semak Mule (PDRM) — checks against reported fraud records.',
+      'NSRC 997 — immediate response for cases that just happened.',
+      'National Fraud Portal — coordination between banks and enforcement.',
+    ],
+    bezaKamiTitle: 'This portal',
+    bezaKami: [
+      'An encyclopedia of scam playbooks in plain language.',
+      'A check tool that explains the correct official step for each kind of detail.',
+      'A community report layer as an early warning, with statuses that never confirm a crime.',
+    ],
+    fasaTitle: 'Development phases',
+    fasaSekarang: 'Current version (MVP)',
+    fasaSekarangItems: [
+      'Encyclopedia of scam playbooks with the core categories',
+      'A check tool that points out to Semak Mule',
+      'Community reports with mandatory moderation before publication',
+      'A moderation dashboard with an audit log',
+      'A news & advisories feed tagged with the encyclopedia categories',
+      'A weekly email digest with double opt-in',
+      'A step-by-step “if you have been scammed” guide',
+      'PDPA privacy notice and a working right-of-reply channel',
+    ],
+    fasaSeterusnya: 'Future phases',
+    fasaSeterusnyaItems: [
+      'Automated news ingestion from official media statements',
+      'User accounts so people can track the status of their own reports',
+      'Moderator sign-in through organisational SSO',
+    ],
+    kandunganTitle: 'Where this content comes from',
+    kandunganLead:
+      'Encyclopedia entries are compiled from public advisories, media reporting and patterns the public reports repeatedly. Example messages are fully rewritten — we do not publish screenshots of real victims’ conversations.',
+    hadTitle: 'Limits of this portal',
+    hadItems: [
+      'We are not an enforcement agency and cannot investigate, freeze accounts or recover money.',
+      'We hold no copy of any agency’s criminal record database.',
+      'The absence of a number from this portal is not evidence that it is safe.',
+      'The information here is general education, not legal advice.',
+    ],
+    sumbanganTitle: 'Contributions and corrections',
+    sumbanganLead:
+      'Found something wrong or out of date? Tell us. Factual corrections are a priority.',
+  },
+  lapor: {
+    title: 'Report to the community',
+    lead:
+      'Your report becomes an early warning for other people. A moderator reviews it first, and it will never be labelled as confirmation of a crime.',
+    amaranTitle: 'Read this before you send',
+    amaran: [
+      'This is not a police report. For a case that just happened, call NSRC 997 and file a police report — that is what enables an investigation and an account freeze.',
+      'Write only what actually happened to you. Do not accuse, and do not copy someone else’s story.',
+      'Do not include IC numbers, full bank card numbers, or other people’s personal details that are not relevant.',
+      'The named party has the right to object and explain. Reports that cannot be supported are removed.',
+    ],
+    medan: {
+      jenis: 'Type of detail',
+      jenisPilih: 'Choose one',
+      nilai: 'The detail being reported',
+      nilaiBantuan: 'For example: a phone number, bank account number, website address, or company name.',
+      kategori: 'Scam category',
+      kategoriKosong: 'I am not sure',
+      penerangan: 'What happened',
+      peneranganBantuan: 'Describe it in order. At least 20 characters.',
+      bukti: 'Evidence (optional)',
+      buktiBantuan:
+        'JPG, PNG or WEBP images, up to 3 files and 5 MB each. Image metadata including GPS location is stripped automatically before storage. Only moderators can view these files.',
+      emel: 'Your email (optional)',
+      emelBantuan:
+        'Used only if a moderator needs to clarify something about your report. Anonymous reports are fully accepted.',
+      pdpa:
+        'I understand this report will be reviewed by a moderator, and I consent to the information I provide being processed for that purpose under the Personal Data Protection Act 2010.',
+    },
+    jenis: {
+      telefon: 'Phone number',
+      akaun_bank: 'Bank account number',
+      url: 'Website / link',
+      syarikat: 'Company or business name',
+      profil_sosial: 'Social media profile',
+      lain: 'Other',
+    },
+    hantar: 'Send report',
+    menghantar: 'Sending…',
+    ralat: {
+      wajib: 'This field is required.',
+      terlalu_pendek: 'Too short. Please give a little more detail.',
+      terlalu_panjang: 'Too long. Please shorten it.',
+      tidak_sah: 'This value is not valid.',
+      pdpa: 'Consent is required before the report can be sent.',
+      umum: 'The report could not be sent. Please try again.',
+      kadar: 'Too many reports sent from this device. Please try again shortly.',
+      bukti_jenis: 'Only JPG, PNG or WEBP image files are accepted.',
+      bukti_saiz: 'File too large. Maximum 5 MB each.',
+      bukti_banyak: 'Maximum 3 evidence files.',
+    },
+    jayaTitle: 'Your report has been received',
+    jayaLead:
+      'Your report is now in the review queue. It is not shown to the public and will not be until a moderator has reviewed it.',
+    jayaLangkah: [
+      'A moderator reviews your report by hand.',
+      'If it is published, it is labelled “Reported by community” — not confirmation of a crime.',
+      'The named party can object, and their explanation will be shown alongside the report.',
+    ],
+    jayaRasmi: 'If you lost money, do not stop here. Call 997 and file a police report.',
+    kembali: 'Back to the home page',
+  },
+  laporanAwam: {
+    title: 'Community report',
+    tidakDijumpai: 'This report was not found or has not been published.',
+    dilaporkanPada: 'Reported on',
+    kategoriLabel: 'Category',
+    jenisLabel: 'Type of detail',
+    peneranganLabel: 'What was reported',
+    penafian:
+      'This is a report from a member of the public, not an official record. It does not mean a crime has been confirmed. For an official check, use Semak Mule (PDRM).',
+    sokongTitle: 'Did the same thing happen to you?',
+    sokongLead:
+      'If you also encountered the same thing with this detail, you can support this report. The number of reporters is shown, but the status stays “reported”.',
+    sokongCta: 'This happened to me too',
+    sokongJaya: 'Thank you. Your support has been recorded.',
+    bantahTitle: 'Is this about you or your business?',
+    bantahLead:
+      'You have the right to object and explain. This report will be marked “Disputed” while we review it, and your explanation will be shown alongside it.',
+    bantahCta: 'Send an objection',
+    bantahNama: 'Your name',
+    bantahEmel: 'Email we can reply to',
+    bantahHujah: 'Your explanation',
+    bantahPdpa:
+      'I consent to my contact details being processed solely for the purpose of handling this objection.',
+    bantahJaya:
+      'Your objection has been received. This report is now marked “Disputed” and we will contact you within 3 working days.',
+    bantahSedia: 'Response from the named party',
+  },
+  moderasi: {
+    title: 'Moderation dashboard',
+    lead: 'Review community reports before they are shown to the public.',
+    masukTitle: 'Moderator sign in',
+    masukId: 'Moderator ID',
+    masukToken: 'Token',
+    masukCta: 'Sign in',
+    masukGagal: 'Invalid ID or token.',
+    masukLalai:
+      'The development demo account is in use (ID “demo”). Set MODERATOR_AKAUN and SESSION_SECRET before launch.',
+    masukTiada:
+      'Moderation is not configured. Set MODERATOR_AKAUN in the server environment before using this dashboard.',
+    keluar: 'Sign out',
+    sebagai: 'Signed in as',
+    giliranTitle: 'Review queue',
+    giliranKosong: 'No reports are waiting for review.',
+    tersiarTitle: 'Published reports',
+    tersiarKosong: 'No reports have been published yet.',
+    logTitle: 'Audit log',
+    logKosong: 'No actions recorded yet.',
+    logLajur: { tarikh: 'Date', moderator: 'Moderator', tindakan: 'Action', laporan: 'Report', sebab: 'Reason' },
+    buktiTitle: 'Evidence',
+    buktiTiada: 'No evidence attached.',
+    sebabLabel: 'Note (optional)',
+    tindakan: {
+      terima: 'Publish as reported',
+      tolak: 'Reject',
+      tanda_dipertikai: 'Mark disputed',
+      buang: 'Remove',
+      buka_semula: 'Reopen',
+    },
+    tindakanNota:
+      'Every action is written to the audit log with your ID and the time. Publish only if the report is clear enough and does not accuse an unrelated party.',
+    pelaporEmel: 'Reporter email',
+    tanpaNama: 'Anonymous',
+    sokongan: 'Supporters',
+  },
+  berita: {
+    title: 'News & advisories feed',
+    lead:
+      'Short summaries of current tactics and official channels, tagged with the same categories as the encyclopedia. Every entry links back to its original source.',
+    cariPlaceholder: 'Search titles or sources',
+    tapisTag: 'Filter by category',
+    hasil: '{n} entries shown',
+    tiada: 'No entries match your filters.',
+    kosongkan: 'Clear filters',
+    jenisLabel: {
+      berita: 'News',
+      amaran: 'Advisory',
+    },
+    jenisNota: {
+      berita: 'A summary of something published elsewhere. Read the original source for full details.',
+      amaran: 'An advisory written by this portal’s team, not a report of an event.',
+    },
+    sumberLabel: 'Source',
+    bacaSumber: 'Read at the original source',
+    sumberNota:
+      'We summarise in our own words and do not copy full text. For official details, go to the original source.',
+    kembali: 'Back to the feed',
+    tidakDijumpai: 'This entry was not found.',
+    kategoriBerkaitan: 'Related categories',
+    beritaUntukKategori: 'Related news & advisories',
+    lihatSemua: 'Open the news feed',
+  },
+  digest: {
+    title: 'Weekly email digest',
+    lead:
+      'One email a week with new entries. No ads, your address is never shared, and you can stop at any time.',
+    emel: 'Your email address',
+    emelBantuan: 'We use it only to send this digest.',
+    pdpa:
+      'I consent to my email address being processed for the purpose of sending this weekly digest under the Personal Data Protection Act 2010.',
+    hantar: 'Subscribe to the digest',
+    menghantar: 'Sending…',
+    jaya:
+      'If that address can be subscribed, we have sent a confirmation email. The subscription is only active once you click the link inside it.',
+    nota:
+      'We do not say whether an address is already on the list — the same answer is given every time, so this form cannot be used to test someone else’s address.',
+    ralat: {
+      emel: 'That email address is not valid.',
+      pdpa: 'Consent is required before you can subscribe.',
+      kadar: 'Too many attempts from this device. Please try again shortly.',
+      umum: 'The subscription could not be processed right now. Please try again.',
+    },
+    sahkanTitle: 'Subscription confirmation',
+    sahkanJaya: 'Your subscription is confirmed. You will receive the next weekly digest.',
+    sahkanGagal:
+      'This confirmation link is not valid, or it was replaced by a more recent request. Please subscribe again.',
+    berhentiTitle: 'Unsubscribe',
+    berhentiJaya: 'You have been unsubscribed and your email address has been deleted from our list.',
+    berhentiGagal: 'This link is not valid, or the address has already been removed.',
+    emelSubjek: 'Confirm your Scam Check Portal digest subscription',
+    emelTeks:
+      'Someone asked for the Malaysia Scam Check Portal weekly digest to be sent to this address.\n\nIf that was you, confirm here:\n{sahkan}\n\nIf it was not you, ignore this email — nothing is sent without confirmation.\n\nTo stop later:\n{berhenti}',
+  },
+  footer: {
+    tentang: 'About the portal',
+    privasi: 'Privacy notice',
+    hakMenjawab: 'Right of reply',
+    status: 'Report status system',
+    saluranRasmi: 'Official channels',
+    penafian:
+      'This is not an official Malaysian government site. The information here is educational. For an official check use Semak Mule (PDRM). For a case that just happened, call NSRC 997.',
+    disemakPada: 'Official channel details verified on',
+    hakCipta: 'An open-source community project.',
+  },
+  notFound: {
+    title: 'Page not found',
+    lead: 'The link you followed may be out of date or mistyped.',
+    cta: 'Back to the home page',
+  },
+};
